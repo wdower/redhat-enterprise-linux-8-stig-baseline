@@ -1,0 +1,49 @@
+include:
+- project: stig/inspec-scanning-integration
+  ref: 'SD-1296'
+  file: templates/templates.yml
+
+before_script:
+  - echo "SCV Pipeline for RHEL8 Inspec Profile."
+
+stages:
+  - setup
+  - verify
+  - publish
+  - report
+
+setup:
+  extends: .ci:stage:setup:inspec
+
+check:
+  extends: .ci:stage:check:inspec
+  dependencies:
+  - setup
+  variables:
+    INSPEC_VENDOR: 'true'
+    GIT_CREDS: 'true'
+
+lint:
+  extends: .ci:stage:lint:inspec
+  dependencies:
+  - setup
+
+kitchen-exec:
+  extends: .ci:stage:kitchen-exec:inspec
+  variables:
+    VANILLA_COMPLIANCE_THRESHOLD: "{compliance.min: 0, error.total.max: 0}"
+    HARDENED_COMPLIANCE_THRESHOLD: "{compliance.min: 60, error.total.max: 0, failed.critical.max: 0}"
+    DEBUG: "false"
+
+.publish:
+  extends: .ci:stage:publish:inspec:artifacts
+  dependencies:
+  - check
+  - lint
+  - exec
+
+.sync:
+  extends: .ci:stage:publish:inspec:sync
+  variables:
+    SYNC_REPO: ""
+    SYNC_TOKEN: ""
