@@ -1,6 +1,6 @@
 include:
 - project: stig/inspec-scanning-integration
-  ref: 'SD-1296'
+  ref: 'master'
   file: templates/templates.yml
 
 before_script:
