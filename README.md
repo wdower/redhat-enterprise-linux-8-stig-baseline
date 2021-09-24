@@ -5,6 +5,8 @@
 This automated Security Technical Implementation Guide (STIG) validator was developed to reduce the time it takes to perform a security check based upon STIG Guidance from DISA. These check results should provide information needed to receive a secure authority to operate (ATO) certification for the applicable technology.
 <b>RHEL8</b> uses [Chef InSpec](https://github.com/chef/inspec), which provides an open source compliance, security and policy testing framework that dynamically extracts system configuration information.
 
+Please note: This RHEL8 Check Profile performs checks for both the VM Operating System and conatiner based UBI checks. Link [here](https://gitlab.dsolab.io/scv-content/inspec/operating-systems/redhat-enterprise-linux-8-stig-baseline/-/blob/master/README.md#check-overview) for VM normal checks, and [here]() for the UBI list of checks.
+
 ## RHEL8 STIG Overview
 
 The <b>RHEL8</b> STIG (https://public.cyber.mil/stigs/) by the United States Defense Information Systems Agency (DISA) offers a comprehensive compliance guide for the configuration and operation of various technologies.
