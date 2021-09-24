@@ -372,7 +372,7 @@ inspec exec <Profile> -t ssh://TARGET_USERNAME@TARGET_IP:TARGET_PORT --sudo -i <
 
 ## Check Overview:
 
-**Normal Checks**
+## **Normal Checks**
 
 These checks will follow the normal automation process and will report accurate STIG compliance PASS/FAIL.
 
@@ -722,7 +722,7 @@ These checks will follow the normal automation process and will report accurate 
 | SV-230561	| The tuned package must not be installed unless mission essential on RHEL 8.	||
 
 
-**UBI8 Container Applicable Checks**
+## **UBI8 Container Applicable Checks**
 
 The following RHEL8 STIG rules are sub-selected by RHEL8 OpenSCAP scan configuration for a RHEL UBI8 container. 
 
