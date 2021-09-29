@@ -35,17 +35,10 @@ until the passwords can be regenerated with SHA-512."
 
   weak_pw_hash_users = inspec.shadow.where { password !~ /^[*!]{1,2}.*$|^\$6\$.*$|^$/ }.users
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe weak_pw_hash_users do
-      it 'should only contain SHA512 hashes' do
-        message = "Users without SHA512 hashes: #{weak_pw_hash_users.join(', ')}"
-        expect(weak_pw_hash_users).to be_empty, message
-      end
+  describe weak_pw_hash_users do
+    it 'should only contain SHA512 hashes' do
+      message = "Users without SHA512 hashes: #{weak_pw_hash_users.join(', ')}"
+      expect(weak_pw_hash_users).to be_empty, message
     end
   end
 end

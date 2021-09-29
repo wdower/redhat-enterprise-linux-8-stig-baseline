@@ -79,14 +79,8 @@ bundle from cyber.mil and copy the DoD_PKE_CA_chain.pem into the following file:
 
   ca_file = input('root_ca_file')
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe x509_certificate(ca_file) do
-      its('issuer_cn') { should match 'CN=DoD' }
-    end
+
+  describe x509_certificate(ca_file) do
+    its('issuer_cn') { should match 'CN=DoD' }
   end
 end

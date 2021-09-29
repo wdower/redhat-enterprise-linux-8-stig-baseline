@@ -63,7 +63,7 @@ restart the \"sssd\" service, run the following command:
   tag cci: ['CCI-000187']
   tag nist: ['IA-5 (2) (c)']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/sssd/sssd.conf').exist?
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"

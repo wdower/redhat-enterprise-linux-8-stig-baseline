@@ -49,15 +49,8 @@ account that has a duplicate User ID (UID) with a unique UID."
 
   user_count = passwd.where { uid.to_i >= 1000 }.entries.length
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe "Count of interactive unique user IDs should match interactive user count (#{user_count}): UID count" do
-      subject { passwd.where { uid.to_i >= 1000 }.uids.uniq.length }
-      it { should eq user_count }
-    end
+  describe "Count of interactive unique user IDs should match interactive user count (#{user_count}): UID count" do
+    subject { passwd.where { uid.to_i >= 1000 }.uids.uniq.length }
+    it { should eq user_count }
   end
 end

@@ -45,14 +45,7 @@ removing the sendmail package from the system with the following command:
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe package('sendmail') do
-      it { should_not be_installed }
-    end
+  describe package('sendmail') do
+    it { should_not be_installed }
   end
 end

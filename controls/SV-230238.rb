@@ -54,21 +54,14 @@ authentication.
   krb5_server = package('krb5-server')
   krb5_workstation = package('krb5-workstation')
 
-  if virtualization.system.eql?('docker')
+  if (krb5_server.installed? && krb5_server.version >= '1.17-18.el8') || (krb5_workstation.installed? && krb5_workstation.version >= '1.17-18.el8')
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe 'The system has krb5-workstation and server version 1.17-18 or higher' do
+      skip 'The system has krb5-workstation and server version 1.17-18 or higner, this requirement is Not Applicable.'
     end
   else
-    if (krb5_server.installed? && krb5_server.version >= '1.17-18.el8') || (krb5_workstation.installed? && krb5_workstation.version >= '1.17-18.el8')
-      impact 0.0
-      describe 'The system has krb5-workstation and server version 1.17-18 or higher' do
-        skip 'The system has krb5-workstation and server version 1.17-18 or higner, this requirement is Not Applicable.'
-      end
-    else
-      describe command('ls -al /etc/*.keytab') do
-        its('stdout') { should be_empty }
-      end
+    describe command('ls -al /etc/*.keytab') do
+      its('stdout') { should be_empty }
     end
   end
 end

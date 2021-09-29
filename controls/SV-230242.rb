@@ -55,23 +55,16 @@ by root or a system account:
   allowed_accounts = (input('known_system_accounts') + ['root']).uniq
   files = command('find / -type d -perm -0002 -exec ls -d {} \\;').stdout.split
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if files.empty?
+    describe 'List of all public directories on the target' do
+      subject { files }
+      it { should be_empty }
     end
   else
-    if files.empty?
-      describe 'List of all public directories on the target' do
-        subject { files }
-        it { should be_empty }
-      end
-    else
-      files.each do |file|
-        describe file(file) do
-          its('owner') { should be_in allowed_accounts }
-          its('group') { should be_in allowed_accounts }
-        end
+    files.each do |file|
+      describe file(file) do
+        its('owner') { should be_in allowed_accounts }
+        its('group') { should be_in allowed_accounts }
       end
     end
   end

@@ -59,23 +59,16 @@ until the crisis is resolved.
 
   temporary_accounts = input('temporary_accounts')
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if temporary_accounts.empty?
+    describe 'Temporary accounts' do
+      subject { temporary_accounts }
+      it { should be_empty }
     end
   else
-    if temporary_accounts.empty?
-      describe 'Temporary accounts' do
-        subject { temporary_accounts }
-        it { should be_empty }
-      end
-    else
-      temporary_accounts.each do |acct|
-        describe user(acct.to_s) do
-          its('maxdays') { should cmp <= 3 }
-          its('maxdays') { should cmp > 0 }
-        end
+    temporary_accounts.each do |acct|
+      describe user(acct.to_s) do
+        its('maxdays') { should cmp <= 3 }
+        its('maxdays') { should cmp > 0 }
       end
     end
   end

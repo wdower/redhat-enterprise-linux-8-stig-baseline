@@ -58,14 +58,7 @@ adding the following line to \"/etc/crypto-policies/back-ends/gnutls.config\":
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe file('/etc/crypto-policies/back-ends/gnutls.config') do
-      its('content') { should match /-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0/ }
-    end
+  describe file('/etc/crypto-policies/back-ends/gnutls.config') do
+    its('content') { should match /-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0/ }
   end
 end

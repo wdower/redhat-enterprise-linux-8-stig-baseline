@@ -45,7 +45,7 @@ daemon by adding/modifying the following line in the /etc/chrony.conf file.
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/chrony.conf').exist?
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"

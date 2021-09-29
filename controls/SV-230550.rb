@@ -41,21 +41,14 @@ restrict client connections to the local network with the following command:
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if package('postfix').installed?
+    describe command('postconf -n smtpd_client_restrictions') do
+      its('stdout.strip') { should match /^smtpd_client_restrictions\s+=\s+(permit_mynetworks|reject)($|(,\s*(permit_mynetworks|reject)\s*$))/i }
     end
   else
-    if package('postfix').installed?
-      describe command('postconf -n smtpd_client_restrictions') do
-        its('stdout.strip') { should match /^smtpd_client_restrictions\s+=\s+(permit_mynetworks|reject)($|(,\s*(permit_mynetworks|reject)\s*$))/i }
-      end
-    else
-      impact 0.0
-      describe 'The `postfix` package is not installed' do
-        skip 'The `postfix` package is not installed, this control is Not Applicable'
-      end
+    impact 0.0
+    describe 'The `postfix` package is not installed' do
+      skip 'The `postfix` package is not installed, this control is Not Applicable'
     end
   end
 end

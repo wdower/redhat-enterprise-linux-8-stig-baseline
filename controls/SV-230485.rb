@@ -45,13 +45,15 @@ a server by adding/modifying the following line in the /etc/chrony.conf file.
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
 
-  if virtualization.system.eql?('docker')
+  chrony_conf = ntp_conf('/etc/chrony.conf')
+
+  if virtualization.system.eql?('docker') && !file('/etc/chrony.conf').exist?
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"
     end
   else
-    describe ntp_conf('/etc/chrony.conf') do
+    describe chrony_conf do
       its('port') { should cmp 0 }
     end
   end

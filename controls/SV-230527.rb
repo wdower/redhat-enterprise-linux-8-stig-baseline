@@ -58,10 +58,10 @@ connections to the server by add or modifying the following line in the
   tag cci: ['CCI-000068']
   tag nist: ['AC-17 (2)']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/ssh/sshd_config').exist?
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "Control not applicable - SSH is not installed within containerized RHEL" do
+      skip "Control not applicable - SSH is not installed within containerized RHEL"
     end
   else
     describe sshd_config do

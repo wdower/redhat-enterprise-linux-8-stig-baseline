@@ -77,24 +77,17 @@ restart the \"sssd\" service, run the following command:
   tag cci: ['CCI-000044']
   tag nist: ['AC-7 a']
 
-  if virtualization.system.eql?('docker')
+  if os.release.to_f >= 8.2
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "The release is #{os.release}" do
+      skip 'The release is 8.2 or newer; this control is Not Applicable.'
     end
   else
-    if os.release.to_f >= 8.2
-      impact 0.0
-      describe "The release is #{os.release}" do
-        skip 'The release is 8.2 or newer; this control is Not Applicable.'
-      end
-    else
-      describe pam('/etc/pam.d/password-auth') do
-        its('lines') { should match_pam_rule('auth [default=die]|required pam_faillock.so preauth').all_with_args('silent') }
-      end
-      describe pam('/etc/pam.d/system-auth') do
-        its('lines') { should match_pam_rule('auth [default=die]|required pam_faillock.so preauth').all_with_args('silent') }
-      end
+    describe pam('/etc/pam.d/password-auth') do
+      its('lines') { should match_pam_rule('auth [default=die]|required pam_faillock.so preauth').all_with_args('silent') }
+    end
+    describe pam('/etc/pam.d/system-auth') do
+      its('lines') { should match_pam_rule('auth [default=die]|required pam_faillock.so preauth').all_with_args('silent') }
     end
   end
 end

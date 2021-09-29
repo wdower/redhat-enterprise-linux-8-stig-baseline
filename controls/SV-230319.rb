@@ -44,15 +44,8 @@ group."
     ww_dirs += command(cmd).stdout.split("\n")
   end
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe 'List of world-writeable directories which are not group-owned by system accounts across all partitions' do
-      subject { ww_dirs.to_a }
-      it { should be_empty }
-    end
+  describe 'List of world-writeable directories which are not group-owned by system accounts across all partitions' do
+    subject { ww_dirs.to_a }
+    it { should be_empty }
   end
 end

@@ -38,10 +38,10 @@ the SSH daemon, run the following command:
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !directory('/etc/ssh').exist?
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "Control not applicable - SSH is not installed within containerized RHEL" do
+      skip "Control not applicable - SSH is not installed within containerized RHEL"
     end
   else
     key_files = command("find /etc/ssh -xdev -name '*ssh_host*key'").stdout.split("\n")
