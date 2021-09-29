@@ -90,38 +90,31 @@ line:
 
   lockout_time = input('lockout_time')
 
-  if virtualization.system.eql?('docker')
+  if os.release.to_f <= 8.2
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "The release is #{os.release}" do
+      skip 'The release is lower than 8.2; this control is Not Applicable.'
     end
   else
-    if os.release.to_f <= 8.2
-      impact 0.0
-      describe "The release is #{os.release}" do
-        skip 'The release is lower than 8.2; this control is Not Applicable.'
+    describe pam('/etc/pam.d/password-auth') do
+      its('lines') { should match_pam_rule('auth required pam_faillock.so preauth') }
+      its('lines') { should match_pam_rule('auth required pam_faillock.so authfail') }
+      its('lines') { should match_pam_rule('account required pam_faillock.so') }
+    end
+
+    describe pam('/etc/pam.d/system-auth') do
+      its('lines') { should match_pam_rule('auth required pam_faillock.so preauth') }
+      its('lines') { should match_pam_rule('auth required pam_faillock.so authfail') }
+      its('lines') { should match_pam_rule('account required pam_faillock.so') }
+    end
+
+    describe.one do
+      describe parse_config_file('/etc/security/faillock.conf') do
+        its('unlock_time') { should cmp 0 }
       end
-    else
-      describe pam('/etc/pam.d/password-auth') do
-        its('lines') { should match_pam_rule('auth required pam_faillock.so preauth') }
-        its('lines') { should match_pam_rule('auth required pam_faillock.so authfail') }
-        its('lines') { should match_pam_rule('account required pam_faillock.so') }
-      end
-  
-      describe pam('/etc/pam.d/system-auth') do
-        its('lines') { should match_pam_rule('auth required pam_faillock.so preauth') }
-        its('lines') { should match_pam_rule('auth required pam_faillock.so authfail') }
-        its('lines') { should match_pam_rule('account required pam_faillock.so') }
-      end
-  
-      describe.one do
-        describe parse_config_file('/etc/security/faillock.conf') do
-          its('unlock_time') { should cmp 0 }
-        end
-        describe parse_config_file('/etc/security/faillock.conf') do
-          its('unlock_time') { should cmp >= lockout_time }
-          its('unlock_time') { should cmp <= 604800 }
-        end
+      describe parse_config_file('/etc/security/faillock.conf') do
+        its('unlock_time') { should cmp >= lockout_time }
+        its('unlock_time') { should cmp <= 604800 }
       end
     end
   end

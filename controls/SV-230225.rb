@@ -153,10 +153,10 @@ Agreement for details.\"
   tag cci: ['CCI-000048']
   tag nist: ['AC-8 a']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/ssh/sshd_config').exist?
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "Control not applicable - SSH is not installed within containerized RHEL" do
+      skip "Control not applicable - SSH is not installed within containerized RHEL"
     end
   else
     banner_message_text_ral = input('banner_message_text_ral')

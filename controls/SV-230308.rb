@@ -33,24 +33,17 @@ file systems that are being imported via NFS."
 
   nfs_systems = etc_fstab.nfs_file_systems.entries
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if !nfs_systems.nil? && !nfs_systems.empty?
+    nfs_systems.each do |nfs_system|
+      describe "Network File System mounted on #{nfs_system['mount_point']}" do
+        subject { nfs_system }
+        its('mount_options') { should include 'nosuid' }
+      end
     end
   else
-    if !nfs_systems.nil? && !nfs_systems.empty?
-      nfs_systems.each do |nfs_system|
-        describe "Network File System mounted on #{nfs_system['mount_point']}" do
-          subject { nfs_system }
-          its('mount_options') { should include 'nosuid' }
-        end
-      end
-    else
-      describe 'No NFS file systems were found' do
-        subject { nfs_systems.nil? || nfs_systems.empty? }
-        it { should eq true }
-      end
+    describe 'No NFS file systems were found' do
+      subject { nfs_systems.nil? || nfs_systems.empty? }
+      it { should eq true }
     end
   end
 end

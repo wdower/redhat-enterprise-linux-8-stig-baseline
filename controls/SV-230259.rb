@@ -44,22 +44,15 @@ file not group-owned by \"root\" or a required system account.
 
   files = command('find -L /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin ! -group root -exec ls -d {} \\;').stdout.split("\n")
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if files.empty?
+    describe 'List of system commands not grouped into root' do
+      subject { files }
+      it { should be_empty }
     end
   else
-    if files.empty?
-      describe 'List of system commands not grouped into root' do
-        subject { files }
-        it { should be_empty }
-      end
-    else
-      files.each do |file|
-        describe file(file) do
-          it { should be_grouped_into 'root' }
-        end
+    files.each do |file|
+      describe file(file) do
+        it { should be_grouped_into 'root' }
       end
     end
   end

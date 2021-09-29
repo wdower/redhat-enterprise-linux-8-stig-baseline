@@ -44,22 +44,15 @@ group-owned by \"root\".
 
   files = command('find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -d {} \\;').stdout.split("\n")
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if files.empty?
+    describe 'List of system-wide shared library files not group into by root' do
+      subject { files }
+      it { should be_empty }
     end
   else
-    if files.empty?
-      describe 'List of system-wide shared library files not group into by root' do
-        subject { files }
-        it { should be_empty }
-      end
-    else
-      files.each do |file|
-        describe file(file) do
-          it { should be_grouped_into 'root' }
-        end
+    files.each do |file|
+      describe file(file) do
+        it { should be_grouped_into 'root' }
       end
     end
   end

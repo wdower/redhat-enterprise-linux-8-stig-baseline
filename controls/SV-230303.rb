@@ -32,32 +32,26 @@ file systems that are associated with removable media."
 
   non_removable_media_fs = input('non_removable_media_fs')
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    file_systems = etc_fstab.params
-    if !file_systems.nil? && !file_systems.empty?
-      file_systems.each do |file_sys_line|
-        if !non_removable_media_fs.include?(file_sys_line['mount_point'])
-          describe "The mount point #{file_sys_line['mount_point']}" do
-            subject { file_sys_line['mount_options'] }
-            it { should include 'nodev' }
-          end
-        else
-          describe "File system \"#{file_sys_line['mount_point']}\" does not correspond to removable media." do
-            subject { non_removable_media_fs.include?(file_sys_line['mount_point']) }
-            it { should eq true }
-          end
+  file_systems = etc_fstab.params
+  if !file_systems.nil? && !file_systems.empty?
+    file_systems.each do |file_sys_line|
+      if !non_removable_media_fs.include?(file_sys_line['mount_point'])
+        describe "The mount point #{file_sys_line['mount_point']}" do
+          subject { file_sys_line['mount_options'] }
+          it { should include 'nodev' }
+        end
+      else
+        describe "File system \"#{file_sys_line['mount_point']}\" does not correspond to removable media." do
+          subject { non_removable_media_fs.include?(file_sys_line['mount_point']) }
+          it { should eq true }
         end
       end
-    else
-      describe 'No file systems were found.' do
-        subject { file_systems.nil? }
-        it { should eq true }
-      end
+    end
+  else
+    describe 'No file systems were found.' do
+      subject { file_systems.nil? }
+      it { should eq true }
     end
   end
+
 end

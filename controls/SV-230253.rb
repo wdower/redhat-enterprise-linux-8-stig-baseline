@@ -48,10 +48,10 @@ or missing, this is a finding.
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/sysconfig/sshd').exist?
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "Control not applicable - SSH is not installed within containerized RHEL" do
+      skip "Control not applicable - SSH is not installed within containerized RHEL"
     end
   else
     describe parse_config_file('/etc/sysconfig/sshd') do

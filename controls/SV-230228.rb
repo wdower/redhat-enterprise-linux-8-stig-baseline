@@ -55,10 +55,10 @@ To restart the \"rsyslog\" service, run the following command:
   tag cci: ['CCI-000067']
   tag nist: ['AC-17 (1)']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/ssh/sshd_config').exist?
     impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+    describe "Control not applicable; remote access not configured within containerized RHEL" do
+      skip "Control not applicable; remote access not configured within containerized RHEL"
     end
   else
     describe command('grep -E \'(auth.*|authpriv.*|daemon.*)\' /etc/rsyslog.conf') do

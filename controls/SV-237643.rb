@@ -42,14 +42,15 @@ no results are returned, this is a finding.
   tag cci: ['CCI-002038']
   tag nist: ['IA-11']
 
-  config = bash("grep -i 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/* |  awk -F ':' '{ print $2 }'")
 
-  if virtualization.system.eql?('docker')
+
+  if virtualization.system.eql?('docker') && !command("sudo").exist?
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"
     end
   else
+    config = bash("grep -i 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/* |  awk -F ':' '{ print $2 }'")
     describe config do
       its('stdout') { should match /^Defaults timestamp_timeout/ }
     end

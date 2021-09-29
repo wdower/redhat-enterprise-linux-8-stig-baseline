@@ -32,22 +32,15 @@ following command:
 
   private_key_files = input('private_key_files')
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  if private_key_files.empty?
+    describe 'No private key files specified' do
+      skip 'No private key files were given in the input, this control is Not Applicable'
     end
   else
-    if private_key_files.empty?
-      describe 'No private key files specified' do
-        skip 'No private key files were given in the input, this control is Not Applicable'
-      end
-    else
-      private_key_files.each do |kf|
-        describe "Private key file #{kf} should have a passphrase" do
-          subject { inspec.command("ssh-keygen -y -P '' -f #{kf}").stderr }
-          it { should match 'incorrect passphrase supplied to decrypt private key' }
-        end
+    private_key_files.each do |kf|
+      describe "Private key file #{kf} should have a passphrase" do
+        subject { inspec.command("ssh-keygen -y -P '' -f #{kf}").stderr }
+        it { should match 'incorrect passphrase supplied to decrypt private key' }
       end
     end
   end

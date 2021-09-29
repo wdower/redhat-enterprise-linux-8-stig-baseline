@@ -46,20 +46,13 @@ requirement or remove it from the system with the following command:
   tag cci: ['CCI-000803']
   tag nist: ['IA-7']
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  describe.one do
+    describe package('krb5-server') do
+      it { should_not be_installed }
     end
-  else
-    describe.one do
-      describe package('krb5-server') do
-        it { should_not be_installed }
-      end
-  
-      describe package('krb5-server') do
-        its('version') { should cmp >= '1.17-9.el8' }
-      end
+
+    describe package('krb5-server') do
+      its('version') { should cmp >= '1.17-9.el8' }
     end
   end
 end

@@ -28,15 +28,8 @@ non-root local partitions."
 
   mount_points = command("mount \| grep '^/dev\\S* on /\\S' \| grep --invert-match 'nodev'").stdout
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe "List of devices mounted without 'nodev' option outside root /dev directory" do
-      subject { mount_points }
-      it { should be_empty }
-    end
+  describe "List of devices mounted without 'nodev' option outside root /dev directory" do
+    subject { mount_points }
+    it { should be_empty }
   end
 end

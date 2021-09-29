@@ -55,7 +55,7 @@ line \"[pam]\".
 
   sssd_config = parse_config_file('/etc/sssd/sssd.conf')
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && sssd_config.content == nil
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"

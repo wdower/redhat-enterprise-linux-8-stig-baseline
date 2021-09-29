@@ -53,14 +53,7 @@ option by adding /modifying the /etc/fstab with the following line:
   tag cci: ['CCI-001764']
   tag nist: ['CM-7 (2)']
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    describe etc_fstab.where { mount_point == '/dev/shm' } do
-      its('mount_options.flatten') { should include 'nosuid' }
-    end
+  describe etc_fstab.where { mount_point == '/dev/shm' } do
+    its('mount_options.flatten') { should include 'nosuid' }
   end
 end

@@ -63,7 +63,7 @@ this is a finding.
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
 
-  if virtualization.system.eql?('docker')
+  if virtualization.system.eql?('docker') && !file('/etc/pki/tls/openssl.cnf').exist?
     describe "Manual review is required within a container" do
       skip "Checking the host's FIPS compliance can't be done within the container and should be reveiwed manually."
     end

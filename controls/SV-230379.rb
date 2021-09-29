@@ -54,18 +54,11 @@ allow for a normal user to perform administrative-level actions.
   known_system_accounts = input('known_system_accounts')
   user_accounts = input('user_accounts')
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
-    end
-  else
-    allowed_accounts = (known_system_accounts + user_accounts).uniq
-    passwd.users.each do |user|
-      describe user do
-        it 'should be listed in allowed users.' do
-          expect(subject).to(be_in(allowed_accounts))
-        end
+  allowed_accounts = (known_system_accounts + user_accounts).uniq
+  passwd.users.each do |user|
+    describe user do
+      it 'should be listed in allowed users.' do
+        expect(subject).to(be_in(allowed_accounts))
       end
     end
   end
