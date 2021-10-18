@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244546' do
   title "The RHEL 8 fapolicy module must be configured to employ a deny-all,
 permit-by-exception policy to allow the execution of authorized software
@@ -100,5 +98,34 @@ to enforcing mode by editing the \"permissive\" line in the
   tag fix_id: 'F-47778r743886_fix'
   tag cci: ['CCI-001764']
   tag nist: ['CM-7 (2)']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe parse_config_file('/etc/fapolicyd/fapolicyd.conf') do
+      its('permissive') { should eq 0 }
+    end
+  
+    describe file('/etc/fapolicyd/fapolicyd.rules') do
+      it { should exist }
+    end
+  
+    describe file('/etc/fapolicyd/fapolicyd.rules').content.strip.split("\n")[-1] do
+      it { should cmp 'deny all all' }
+    end if file('/etc/fapolicyd/fapolicyd.rules').exist?
+
+    system_mounts = command("mount | egrep '^tmpfs| ext4| ext3| xfs' | awk '{ printf \"%s\\n\", $3 }'").stdout.split
+
+    describe file('/etc/fapolicyd/fapolicyd.mounts') do
+      it { should exist }
+    end
+  
+    describe file('/etc/fapolicyd/fapolicyd.mounts') do
+      its('content.split') { should match_array system_mounts }        
+    end if file('/etc/fapolicyd/fapolicyd.mounts').exist?
+  end
 end
 

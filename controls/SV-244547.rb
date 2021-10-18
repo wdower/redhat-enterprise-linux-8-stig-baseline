@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244547' do
   title 'RHEL 8 must have the USBGuard installed.'
   desc  "Without authenticating devices, unidentified or unknown devices may be
@@ -48,5 +46,16 @@ before establishing a connection, this is a finding.
   tag fix_id: 'F-47779r743889_fix'
   tag cci: ['CCI-001958']
   tag nist: ['IA-3']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe package('usbguard') do
+      it { should be_installed }
+    end
+  end
 end
 

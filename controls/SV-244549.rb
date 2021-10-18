@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244549' do
   title 'All RHEL 8 networked systems must have SSH installed.'
   desc  "Without protection of the transmitted information, confidentiality and
@@ -47,5 +45,16 @@ not have to be employed, and vice versa.
   tag fix_id: 'F-47781r743895_fix'
   tag cci: ['CCI-002418']
   tag nist: ['SC-8']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe package('openssh-server') do
+      it { should be_installed }
+    end
+  end
 end
 

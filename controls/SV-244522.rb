@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244522' do
   title "RHEL 8 operating systems booted with a BIOS must require  a unique
 superusers name upon booting into single-user and maintenance modes."
@@ -43,5 +41,23 @@ a finding.
   tag fix_id: 'F-47754r743814_fix'
   tag cci: ['CCI-000213']
   tag nist: ['AC-3']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    if file('/sys/firmware/efi').exist?
+      impact 0.0
+      describe 'System running UEFI' do
+        skip 'The System is running UEFI, this control is Not Applicable.'
+      end
+    else
+      describe parse_config_file(input('grub_main_cfg')) do
+        its('set superusers') { should_not be_empty }
+      end
+    end
+  end
 end
 

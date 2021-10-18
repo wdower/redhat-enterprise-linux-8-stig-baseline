@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244530' do
   title "RHEL 8 must prevent files with the setuid and setgid bit set from
 being executed on the /boot/efi directory."
@@ -34,5 +32,17 @@ the /boot/efi directory."
   tag fix_id: 'F-47762r743838_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe mount('/boot/efi') do
+      it { should be_mounted }
+      its('options') { should include 'nosuid' }
+    end
+  end
 end
 

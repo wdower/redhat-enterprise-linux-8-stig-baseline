@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244532' do
   title "RHEL 8 must be configured so that all files and directories contained
 in local interactive user home directories are group-owned by a group of which
@@ -52,5 +50,17 @@ local interactive user's files and directories, use the following command:
   tag fix_id: 'F-47764r743844_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  non_interactive_shells = input('non_interactive_shells')
+
+  ignore_shells = non_interactive_shells.join('|')
+
+  findings = Set[]
+  users.where { !shell.match(ignore_shells) && (uid >= 1000 || uid == 0) }.entries.each do |user_info|
+    findings += command("find #{user_info.home} -xdev -not -gid #{user_info.gid}").stdout.split("\n")
+  end
+  describe findings do
+    it { should be_empty }
+  end
 end
 

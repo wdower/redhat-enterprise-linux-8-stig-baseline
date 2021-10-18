@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244540' do
   title 'RHEL 8 must not allow blank or null passwords in the system-auth file.'
   desc  "If an account has an empty password, anyone could log on and run
@@ -29,5 +27,9 @@ should never be used in operational environments."
   tag fix_id: 'F-47772r743868_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  describe command('grep -i nullok /etc/pam.d/system-auth') do
+    its('stdout.strip') { should be_empty }
+  end
 end
 

@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244554' do
   title "RHEL 8 must enable hardening for the Berkeley Packet Filter
 Just-in-time compiler."
@@ -43,5 +41,16 @@ effect. To reload the contents of the files, run the following command:
   tag fix_id: 'F-47786r743910_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe kernel_parameter('net.core.bpf_jit_harden') do
+      its('value') { should eq 2 }
+    end
+  end
 end
 

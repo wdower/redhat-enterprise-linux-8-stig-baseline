@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244521' do
   title "RHEL 8 operating systems booted with United Extensible Firmware
 Interface (UEFI) must require a unique superusers name upon booting into
@@ -44,5 +42,23 @@ a finding.
   tag fix_id: 'F-47753r743811_fix'
   tag cci: ['CCI-000213']
   tag nist: ['AC-3']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    if file('/sys/firmware/efi').exist?
+      describe parse_config_file(input('grub_uefi_main_cfg')) do
+        its('set superusers') { should cmp '"root"' }
+      end
+    else
+      impact 0.0
+      describe 'System running BIOS' do
+        skip 'The System is running BIOS, this control is Not Applicable.'
+      end
+    end
+  end
 end
 

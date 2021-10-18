@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244525' do
   title 'The RHEL 8 SSH daemon must be configured with a timeout interval.'
   desc  "Terminating an idle SSH session within a short time period reduces the
@@ -70,5 +68,16 @@ inactivity.
   tag fix_id: 'F-47757r743823_fix'
   tag cci: ['CCI-001133']
   tag nist: ['SC-10']
+
+  if virtualization.system.eql?('docker') && !file('/etc/ssh/sshd_config').exist?
+    impact 0.0
+    describe "Control not applicable - SSH is not installed within containerized RHEL" do
+      skip "Control not applicable - SSH is not installed within containerized RHEL"
+    end
+  else
+    describe sshd_config do
+      its('ClientAliveInterval') { should cmp <= '600' }
+    end
+  end
 end
 

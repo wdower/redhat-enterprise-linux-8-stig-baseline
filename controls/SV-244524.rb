@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244524' do
   title "The RHEL 8 pam_unix.so module must be configured in the system-auth
 file to use a FIPS 140-2 approved cryptographic hashing algorithm for system
@@ -47,5 +45,9 @@ include the sha512 option for pam_unix.so:
   tag fix_id: 'F-47756r743820_fix'
   tag cci: ['CCI-000803']
   tag nist: ['IA-7']
+
+  describe pam('/etc/pam.d/system-auth') do
+    its('lines') { should match_pam_rule('password sufficient pam_unix.so sha512') }
+  end
 end
 

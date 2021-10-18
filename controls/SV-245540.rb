@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-245540' do
   title "The RHEL 8 operating system must implement the Endpoint Security for
 Linux Threat Prevention tool."
@@ -36,5 +34,20 @@ Security for Linux (ENSL) in conjunction with SELinux.
   tag fix_id: 'F-48770r754729_fix'
   tag cci: ['CCI-001233']
   tag nist: ['SI-2 (2)']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe package('mcafeetp') do
+      its { should be_installed }
+    end
+
+    describe processes('mfetpd') do
+      it { should exist }
+    end
+  end
 end
 

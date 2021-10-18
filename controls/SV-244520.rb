@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244520' do
   title "The RHEL 8 system-auth file must be configured to use a sufficient
 number of hashing rounds."
@@ -41,5 +39,9 @@ set \"rounds\" to a value no lower than \"5000\":
   tag fix_id: 'F-47752r743808_fix'
   tag cci: ['CCI-000196']
   tag nist: ['IA-5 (1) (c)']
+
+  describe pam('/etc/pam.d/system-auth') do
+    its('lines') { should match_pam_rule('password sufficient pam_unix.so').all_with_integer_arg('rounds', '>=', 5000) }
+  end
 end
 

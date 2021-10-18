@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244519' do
   title "RHEL 8 must display a banner before granting local or remote access to
 the system via a graphical user logon."
@@ -65,5 +63,24 @@ this requirement is Not Applicable.
   tag fix_id: 'F-47751r743805_fix'
   tag cci: ['CCI-000048']
   tag nist: ['AC-8 a']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    if package('gnome-desktop3').installed?
+      describe command('grep ^banner-message-enable /etc/dconf/db/local.d/*') do
+        its('stdout.strip') { should cmp 'banner-message-enable=true' }
+      end
+    else
+      impact 0.0
+      describe 'The system does not have GNOME installed' do
+        skip "The system does not have GNOME installed, this requirement is Not
+        Applicable."
+      end
+    end
+  end
 end
 

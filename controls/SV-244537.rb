@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244537' do
   title 'RHEL 8 must have the tmux package installed.'
   desc  "A session lock is a temporary action taken when a user stops work and
@@ -47,5 +45,16 @@ the following command:
   tag fix_id: 'F-47769r743859_fix'
   tag cci: ['CCI-000056']
   tag nist: ['AC-11 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe package('tmux') do
+      it { should be_installed }
+    end
+  end
 end
 

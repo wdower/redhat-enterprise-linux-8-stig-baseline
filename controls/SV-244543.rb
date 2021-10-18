@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244543' do
   title "RHEL 8 must notify the System Administrator (SA) and Information
 System Security Officer (ISSO) (at a minimum) when allocated audit record
@@ -43,5 +41,16 @@ adding/modifying the following line in the /etc/audit/auditd.conf file.
   tag fix_id: 'F-47775r743877_fix'
   tag cci: ['CCI-001855']
   tag nist: ['AU-5 (1)']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe auditd_conf do
+      its('space_left_action.downcase') { should cmp 'email' }
+    end
+  end
 end
 

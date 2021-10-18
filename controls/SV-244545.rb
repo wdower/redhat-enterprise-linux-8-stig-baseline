@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244545' do
   title 'The RHEL 8 fapolicy module must be enabled.'
   desc  "The organization must identify authorized software programs and permit
@@ -58,5 +56,17 @@ preset: disabled)
   tag fix_id: 'F-47777r743883_fix'
   tag cci: ['CCI-001764']
   tag nist: ['CM-7 (2)']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe service('fapolicyd') do
+      it { should be_enabled }
+      it { should be_running }
+    end
+  end
 end
 

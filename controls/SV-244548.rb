@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244548' do
   title 'RHEL 8 must enable the USBGuard.'
   desc  "Without authenticating devices, unidentified or unknown devices may be
@@ -59,5 +57,17 @@ a keyboard or mouse
   tag fix_id: 'F-47780r743892_fix'
   tag cci: ['CCI-001958']
   tag nist: ['IA-3']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe service('usbguard') do
+      it { should be_running }
+      it { should be_enabled }
+    end
+  end
 end
 

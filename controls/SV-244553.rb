@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244553' do
   title "RHEL 8 must ignore IPv4 Internet Control Message Protocol (ICMP)
 redirect messages."
@@ -43,5 +41,16 @@ line in the appropriate file under \"/etc/sysctl.d\":
   tag fix_id: 'F-47785r743907_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe kernel_parameter('net.ipv4.conf.all.accept_redirects') do
+      its('value') { should eq 0 }
+    end
+  end
 end
 

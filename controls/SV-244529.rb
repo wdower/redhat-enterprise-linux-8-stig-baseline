@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244529' do
   title 'RHEL 8 must use a separate file system for /var/tmp.'
   desc  "The use of separate file systems for different paths can protect the
@@ -28,5 +26,16 @@ the following command:
   tag fix_id: 'F-47761r743835_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe etc_fstab.where { mount_point == '/var/tmp' } do
+      it { should exist }
+    end
+  end
 end
 

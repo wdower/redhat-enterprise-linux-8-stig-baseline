@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244544' do
   title 'A firewall must be active on RHEL 8.'
   desc  "\"Firewalld\" provides an easy and effective way to block/limit remote
@@ -47,5 +45,17 @@ command:
   tag fix_id: 'F-47776r743880_fix'
   tag cci: ['CCI-002314']
   tag nist: ['AC-17 (1)']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe systemd_service('firewalld.service') do
+      it { should be_enabled }
+      it { should be_running }
+    end
+  end
 end
 

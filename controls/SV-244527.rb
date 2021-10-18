@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244527' do
   title "RHEL 8 must have the packages required to use the hardware random
 number generator entropy gatherer service."
@@ -41,5 +39,16 @@ generator entropy gatherer service with the following command:
   tag fix_id: 'F-47759r743829_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe package('rng-tools') do
+      it { should be_installed }
+    end
+  end
 end
 

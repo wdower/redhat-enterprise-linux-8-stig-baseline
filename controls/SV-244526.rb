@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244526' do
   title "The RHEL 8 SSH daemon must be configured to use system-wide crypto
 policies."
@@ -52,5 +50,16 @@ adding the following line to /etc/sysconfig/sshd:
   tag fix_id: 'F-47758r743826_fix'
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
+
+  if virtualization.system.eql?('docker') && !file('/etc/sysconfig/sshd').exist?
+    impact 0.0
+    describe "Control not applicable - SSH is not installed within containerized RHEL" do
+      skip "Control not applicable - SSH is not installed within containerized RHEL"
+    end
+  else
+    describe parse_config_file('/etc/sysconfig/sshd') do
+      its('CRYPTO_POLICY') { should be_nil }
+    end
+  end
 end
 

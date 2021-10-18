@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244541' do
   title "RHEL 8 must not allow blank or null passwords in the password-auth
 file."
@@ -30,5 +28,9 @@ should never be used in operational environments."
   tag fix_id: 'F-47773r743871_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  describe command('grep -i nullok /etc/pam.d/password-auth') do
+    its('stdout.strip') { should be_empty }
+  end
 end
 

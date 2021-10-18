@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244523' do
   title "RHEL 8 operating systems must require authentication upon booting into
 emergency mode."
@@ -35,5 +33,16 @@ mode by adding the following line to the
   tag fix_id: 'F-47755r743817_fix'
   tag cci: ['CCI-000213']
   tag nist: ['AC-3']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe service('emergency') do
+      its('params.ExecStart') { should include '/usr/lib/systemd/systemd-sulogin-shell emergency' }
+    end
+  end
 end
 

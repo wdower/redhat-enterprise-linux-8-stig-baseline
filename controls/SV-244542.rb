@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244542' do
   title "RHEL 8 audit records must contain information to establish what type
 of events occurred, the source of events, where events occurred, and the
@@ -65,5 +63,17 @@ following commands:
   tag fix_id: 'F-47774r743874_fix'
   tag cci: ['CCI-000169']
   tag nist: ['AU-12 a']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe service('auditd') do
+      it { should be_enabled }
+      it { should be_running }
+    end
+  end
 end
 

@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244535' do
   title "RHEL 8 must initiate a session lock for graphical user interfaces when
 the screensaver is activated."
@@ -64,5 +62,24 @@ file should be created under the appropriate subdirectory.
   tag fix_id: 'F-47767r743853_fix'
   tag cci: ['CCI-000057']
   tag nist: ['AC-11 a']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    if package('gnome-desktop3').installed?
+      describe command('gsettings get org.gnome.desktop.screensaver lock-delay') do
+        its('stdout.strip') { should match /uint32\s[0-5]/ }
+      end
+    else
+      impact 0.0
+      describe 'The system does not have GNOME installed' do
+        skip "The system does not have GNOME installed, this requirement is Not
+        Applicable."
+      end
+    end
+  end
 end
 

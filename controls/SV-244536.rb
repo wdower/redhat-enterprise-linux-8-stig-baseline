@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244536' do
   title "RHEL 8 must disable the user list at logon for graphical user
 interfaces."
@@ -46,5 +44,24 @@ file should be created under the appropriate subdirectory.
   tag fix_id: 'F-47768r743856_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    if package('gnome-desktop3').installed?
+      describe command('gsettings get org.gnome.login-screen disable-user-list') do
+        its('stdout.strip') { should cmp 'true' }
+      end
+    else
+      impact 0.0
+      describe 'The system does not have GNOME installed' do
+        skip "The system does not have GNOME installed, this requirement is Not
+        Applicable."
+      end
+    end
+  end
 end
 

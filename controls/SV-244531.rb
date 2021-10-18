@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244531' do
   title "All RHEL 8 local interactive user home directory files must have mode
 0750 or less permissive."
@@ -40,5 +38,17 @@ directory with the following command:
   tag fix_id: 'F-47763r743841_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  non_interactive_shells = input('non_interactive_shells')
+
+  ignore_shells = non_interactive_shells.join('|')
+
+  findings = Set[]
+  users.where { !shell.match(ignore_shells) && (uid >= 1000 || uid == 0) }.entries.each do |user_info|
+    findings += command("find #{user_info.home} -xdev -not -name '.*' -perm /027").stdout.split("\n")
+  end
+  describe findings do
+    it { should be_empty }
+  end
 end
 

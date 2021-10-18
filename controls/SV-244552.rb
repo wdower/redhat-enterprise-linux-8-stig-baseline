@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244552' do
   title 'RHEL 8 must not forward IPv4 source-routed packets by default.'
   desc  "Source-routed packets allow the source of the packet to suggest that
@@ -43,5 +41,16 @@ line in the appropriate file under \"/etc/sysctl.d\":
   tag fix_id: 'F-47784r743904_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    describe kernel_parameter('net.ipv4.conf.default.accept_source_route') do
+      its('value') { should eq 0 }
+    end
+  end
 end
 

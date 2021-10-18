@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 control 'SV-244538' do
   title "RHEL 8 must prevent a user from overriding the session idle-delay
 setting for the graphical user interface."
@@ -80,5 +78,23 @@ file should be created under the appropriate subdirectory.
   tag fix_id: 'F-47770r743862_fix'
   tag cci: ['CCI-000057']
   tag nist: ['AC-11 a']
+
+  if virtualization.system.eql?('docker')
+    impact 0.0
+    describe "Control not applicable within a container" do
+      skip "Control not applicable within a container"
+    end
+  else
+    if package('gnome-desktop3').installed?
+      describe command("grep -i idle /etc/dconf/db/local.d/locks/*") do
+        its('stdout.split') { should include  '/org/gnome/desktop/session/idle-delay' }
+      end
+    else
+      impact 0.0
+      describe 'The GNOME desktop is not installed' do
+        skip 'The GNOME desktop is not installed, this control is Not Applicable.'
+      end
+    end
+  end
 end
 
