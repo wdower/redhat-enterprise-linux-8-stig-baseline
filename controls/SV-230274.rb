@@ -70,7 +70,7 @@ restart the \"sssd\" service, run the following command:
       skip "Control not applicable within a container"
     end
   else
-    describe ini({ command: 'cat /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf'}) do
+    describe ini({ command: ' cat /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf 2>/dev/null'}) do
       its('sssd.certificate_verification') { should cmp 'ocsp_dgst=sha1' }
     end
   end
