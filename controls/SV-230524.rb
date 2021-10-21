@@ -22,33 +22,23 @@ devices.
   "
   desc  'rationale', ''
   desc  'check', "
-    Verify the operating system has enabled the use of USBGuard with the
-following command:
+    Verify the USBGuard has a policy configured with the following command:
 
-    $ sudo systemctl status usbguard.service
+    $ sudo usbguard list-rules
 
-    usbguard.service - USBGuard daemon
-    Loaded: loaded (/usr/lib/systemd/system/usbguard.service; enabled; vendor
-preset: disabled)
-    Active: active (running)
+    If the command does not return results or an error is returned, ask the SA
+to indicate how unauthorized peripherals are being blocked.
 
-    If the usbguard.service is not installed and active, ask the SA to indicate
-how unauthorized peripherals are being blocked.
-
-    If there is no evidence that unauthorized peripherals can be blocked before
-establishing a connection, this is a finding.
+    If there is no evidence that unauthorized peripherals are being blocked
+before establishing a connection, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to enable the blocking of unauthorized
-peripherals with the following commands:
+peripherals with the following command:
+    This command must be run from a root shell and will create an allow list
+for any usb devices currently connect to the system.
 
-    $ sudo yum install usbguard.x86_64
-
-    $ sudo usbguard generate-policy > /etc/usbguard/rules.conf
-
-    $ sudo systemctl enable usbguard.service
-
-    $ sudo systemctl start usbguard.service
+    # usbguard generate-policy > /etc/usbguard/rules.conf
 
     Note: Enabling and starting usbguard without properly configuring it for an
 individual system will immediately prevent any access over a usb device such as
@@ -58,9 +48,9 @@ a keyboard or mouse
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000378-GPOS-00163'
   tag gid: 'V-230524'
-  tag rid: 'SV-230524r627750_rule'
+  tag rid: 'SV-230524r744026_rule'
   tag stig_id: 'RHEL-08-040140'
-  tag fix_id: 'F-33168r568319_fix'
+  tag fix_id: 'F-33168r744025_fix'
   tag cci: ['CCI-001958']
   tag nist: ['IA-3']
 
@@ -70,13 +60,9 @@ a keyboard or mouse
       skip "Control not applicable within a container"
     end
   else
-    describe package('usbguard') do
-      it { should be_installed }
-    end
-  
-    describe service('usbguard') do
-      it { should be_running }
-      it { should be_enabled }
+    describe command('usbguard list-rules') do
+      its('stdout') { should_not be_empty }
+      its('exit_status') { should eq 0 }
     end
   end
 end

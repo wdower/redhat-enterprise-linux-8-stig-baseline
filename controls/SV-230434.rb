@@ -32,10 +32,10 @@ auid>=1000 -F auid!=unset -k privileged-ssh
     If the command does not return a line, or the line is commented out, this
 is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the audit system to generate an audit event for any
 successful/unsuccessful use of the \"ssh-keysign\" by adding or updating the
-following rule in the \"/etc/audit/audit.rules\" file:
+following rule in the \"/etc/audit/rules.d/audit.rules\" file:
 
     -a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F
 auid>=1000 -F auid!=unset -k privileged-ssh
@@ -45,14 +45,14 @@ auid>=1000 -F auid!=unset -k privileged-ssh
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000062-GPOS-00031'
-  tag satisfies: %w(SRG-OS-000062-GPOS-00031 SRG-OS-000037-GPOS-00015
-                    SRG-OS-000042-GPOS-00020 SRG-OS-000062-GPOS-00031
-                    SRG-OS-000392-GPOS-00172 SRG-OS-000462-GPOS-00206
-                    SRG-OS-000471-GPOS-00215)
+  tag satisfies: ['SRG-OS-000062-GPOS-00031', 'SRG-OS-000037-GPOS-00015',
+'SRG-OS-000042-GPOS-00020', 'SRG-OS-000062-GPOS-00031',
+'SRG-OS-000392-GPOS-00172', 'SRG-OS-000462-GPOS-00206',
+'SRG-OS-000471-GPOS-00215']
   tag gid: 'V-230434'
-  tag rid: 'SV-230434r627750_rule'
+  tag rid: 'SV-230434r744002_rule'
   tag stig_id: 'RHEL-08-030320'
-  tag fix_id: 'F-33078r568049_fix'
+  tag fix_id: 'F-33078r744001_fix'
   tag cci: ['CCI-000169']
   tag nist: ['AU-12 a']
 

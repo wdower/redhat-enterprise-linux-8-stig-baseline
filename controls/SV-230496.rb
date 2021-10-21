@@ -1,5 +1,5 @@
 control 'SV-230496' do
-  title 'RHEL 8 must disable the stream control transmission (SCTP) protocol.'
+  title 'RHEL 8 must disable the stream control transmission protocol (SCTP).'
   desc  "It is detrimental for operating systems to provide, or install by
 default, functionality exceeding requirements or mission objectives. These
 unnecessary capabilities or services are often overlooked and therefore may
@@ -15,32 +15,32 @@ system against exploitation of any flaws in its implementation.
   "
   desc  'rationale', ''
   desc  'check', "
-    Verify the operating system disables the ability to load the SCTP protocol
-kernel module.
+    Verify the operating system disables the ability to load the SCTP kernel
+module.
 
     $ sudo grep -ri SCTP /etc/modprobe.d/* | grep -i \"/bin/true\"
 
     install SCTP /bin/true
 
     If the command does not return any output, or the line is commented out,
-and use of the SCTP protocol is not documented with the Information System
-Security Officer (ISSO) as an operational requirement, this is a finding.
+and use of the SCTP is not documented with the Information System Security
+Officer (ISSO) as an operational requirement, this is a finding.
 
-    Verify the operating system disables the ability to use the SCTP protocol.
+    Verify the operating system disables the ability to use the SCTP.
 
-    Check to see if the SCTP protocol is disabled with the following command:
+    Check to see if the SCTP is disabled with the following command:
 
     $ sudo grep -ri SCTP /etc/modprobe.d/* | grep -i \"blacklist\"
 
     blacklist SCTP
 
     If the command does not return any output or the output is not \"blacklist
-SCTP\", and use of the SCTP protocol is not documented with the Information
-System Security Officer (ISSO) as an operational requirement, this is a finding.
+SCTP\", and use of the SCTP is not documented with the Information System
+Security Officer (ISSO) as an operational requirement, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to disable the ability to use the SCTP
-protocol kernel module.
+kernel module.
 
     Add or update the following lines in the file
 \"/etc/modprobe.d/blacklist.conf\":
@@ -54,9 +54,9 @@ protocol kernel module.
   tag severity: 'low'
   tag gtitle: 'SRG-OS-000095-GPOS-00049'
   tag gid: 'V-230496'
-  tag rid: 'SV-230496r627750_rule'
+  tag rid: 'SV-230496r744017_rule'
   tag stig_id: 'RHEL-08-040023'
-  tag fix_id: 'F-33140r568235_fix'
+  tag fix_id: 'F-33140r744016_fix'
   tag cci: ['CCI-000381']
   tag nist: ['CM-7 a']
 

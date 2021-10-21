@@ -17,7 +17,7 @@ configuration file for \"/etc/rsyslog.conf\" or \"/etc/rsyslog.d/*.conf\" files.
         /var/log/messages
     /etc/rsyslog.conf:# Log cron stuff
     /etc/rsyslog.conf:cron.*
-                                                /var/log/cron.log
+                                                /var/log/cron
 
     If the command does not return a response, check for cron logging all
 facilities with the following command.
@@ -30,24 +30,25 @@ facilities with the following command.
     If \"rsyslog\" is not logging messages for the cron facility or all
 facilities, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure \"rsyslog\" to log all cron messages by adding or updating the
 following line to \"/etc/rsyslog.conf\" or a configuration file in the
 /etc/rsyslog.d/ directory:
 
-    cron.* /var/log/cron.log
+    cron.* /var/log/cron
+
+    The rsyslog daemon must be restarted for the changes to take effect:
+    $ sudo systemctl restart rsyslog.service
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230387'
-  tag rid: 'SV-230387r627750_rule'
+  tag rid: 'SV-230387r743996_rule'
   tag stig_id: 'RHEL-08-030010'
-  tag fix_id: 'F-33031r567908_fix'
+  tag fix_id: 'F-33031r743995_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
-
-  log_pkg_path = input('log_pkg_path')
 
   if virtualization.system.eql?('docker')
     impact 0.0
@@ -56,12 +57,11 @@ following line to \"/etc/rsyslog.conf\" or a configuration file in the
     end
   else
     describe.one do
-      describe command("grep cron #{log_pkg_path}") do
-        its('stdout.strip') { should match /^cron/ }
+      describe command("grep  -hsv \"^#\" /etc/rsyslog.conf /etc/rsyslog.d/*.conf| grep ^cron") do
+        its('stdout') { should match /cron\.\*[\s]*\/var\/log\/cron/ }
       end
-      describe file(log_pkg_path.to_s) do
-        its('content') { should match %r{^\*\.\* \/var\/log\/messages\n?$} }
-        its('content') { should_not match %r{^*.*\s+~$.*^*\.\* \/var\/log\/messages\n?$}m }
+      describe command("grep  -hsv \"^#\" /etc/rsyslog.conf /etc/rsyslog.d/*.conf| grep /var/log/messages") do
+        its('stdout') { should match /\*.info;mail.none;authpriv.none;cron.none[\s]*\/var\/log\/messages/ }
       end
     end
   end

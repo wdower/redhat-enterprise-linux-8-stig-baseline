@@ -22,14 +22,14 @@ log files containing system logon information. The returned directory
 
     Check the user's primary group with the following command:
 
-    $ sudo grep admin /etc/group
+    $ sudo grep $(grep smithj /etc/passwd | awk -F: ‘{print $4}’) /etc/group
 
     admin:x:250:smithj,jonesj,jacksons
 
     If the user home directory referenced in \"/etc/passwd\" is not group-owned
 by that user’s primary GID, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Change the group owner of a local interactive user’s home directory to the
 group found in \"/etc/passwd\". To change the group owner of a local
 interactive user’s home directory, use the following command:
@@ -43,7 +43,7 @@ of \"/home/smithj\", and has a primary group of users.
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230322'
-  tag rid: 'SV-230322r627750_rule'
+  tag rid: 'SV-230322r743963_rule'
   tag stig_id: 'RHEL-08-010740'
   tag fix_id: 'F-32966r567713_fix'
   tag cci: ['CCI-000366']
