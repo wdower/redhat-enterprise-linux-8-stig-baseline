@@ -62,16 +62,16 @@ configuration survives kernel updates:
   tag cci: ['CCI-001849']
   tag nist: ['AU-4']
 
-  grub_config = command('grub2-editenv - list').stdout
-  kernelopts = parse_config(grub_config)['kernelopts'].strip.gsub(" ","\n")
-  grub_cmdline_linux = parse_config_file('/etc/default/grub')['GRUB_CMDLINE_LINUX'].strip.gsub(" ","\n")
-
   if virtualization.system.eql?('docker')
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"
     end
   else
+    grub_config = command('grub2-editenv - list').stdout
+    kernelopts = parse_config(grub_config)['kernelopts'].strip.gsub(" ","\n")
+    grub_cmdline_linux = parse_config_file('/etc/default/grub')['GRUB_CMDLINE_LINUX'].strip.gsub(" ","\n")
+  
     describe "kernelopts" do
       subject{ parse_config(kernelopts) } 
       its('audit_backlog_limit') { should cmp >=8192 }
