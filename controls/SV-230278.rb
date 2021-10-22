@@ -11,7 +11,9 @@ switching expense.
 
     Virtual Syscalls provide an opportunity of attack for a user who has
 control of the return instruction pointer.  Disabling vsyscalls help to prevent
-return oriented programming (ROP) attacks via buffer overflows and overruns.
+return oriented programming (ROP) attacks via buffer overflows and overruns. If
+the system intends to run containers based on RHEL 6 components, then virtual
+syscalls will need enabled so the components function properly.
 
 
   "
@@ -37,11 +39,13 @@ boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
     GRUB_CMDLINE_LINUX=\"vsyscall=none\"
 
-    If \"vsyscall\" is not set to \"none\", is missing or commented out, this
-is a finding.
+    If \"vsyscall\" is not set to \"none\", is missing or commented out and is
+not documented with the Information System Security Officer (ISSO) as an
+operational requirement, this is a finding.
   "
-  desc 'fix', "
-    Configure RHEL 8 to disable vsyscalls with the following commands:
+  desc  'fix', "
+    Document the use of vsyscalls with the ISSO as an operational requirement
+or disable them with the following command:
 
     $ sudo grubby --update-kernel=ALL --args=\"vsyscall=none\"
 
@@ -53,11 +57,11 @@ configuration survives kernel updates:
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000134-GPOS-00068'
-  tag satisfies: %w(SRG-OS-000134-GPOS-00068 SRG-OS-000433-GPOS-00192)
+  tag satisfies: ['SRG-OS-000134-GPOS-00068', 'SRG-OS-000433-GPOS-00192']
   tag gid: 'V-230278'
-  tag rid: 'SV-230278r627750_rule'
+  tag rid: 'SV-230278r743948_rule'
   tag stig_id: 'RHEL-08-010422'
-  tag fix_id: 'F-32922r567581_fix'
+  tag fix_id: 'F-32922r743947_fix'
   tag cci: ['CCI-001084']
   tag nist: ['SC-3']
 

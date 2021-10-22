@@ -24,10 +24,8 @@ has been received from the client, sshd will send a message through the
 encrypted channel to request a response from the client. The
 \"ClientAliveCountMax\" is the number of client alive messages that may be sent
 without sshd receiving any messages back from the client. If this threshold is
-met, sshd will disconnect the client. The default setting for
-\"ClientAliveCountMax\" is \"3\". If \"ClientAliveInterval is set to \"15\" and
-\"ClientAliveCountMax\" is left at the default, unresponsive SSH clients will
-be disconnected after approximately 45 seconds.
+met, sshd will disconnect the client. For more information on these settings
+and others, refer to the sshd_config man pages.
 
 
   "
@@ -37,28 +35,24 @@ be disconnected after approximately 45 seconds.
 automatically terminated at the end of the session or after 10 minutes of
 inactivity.
 
-    Check that the \"ClientAliveInterval\" variable is set to a value of
-\"600\" or less and that the \"ClientAliveCountMax\" is set to \"0\" by
-performing the following command:
+    Check that the \"ClientAliveCountMax\" is set to \"0\" by performing the
+following command:
 
     $ sudo grep -i clientalive /etc/ssh/sshd_config
 
     ClientAliveInterval 600
     ClientAliveCountMax 0
 
-    If \"ClientAliveInterval\" and \"ClientAliveCountMax\" do not exist, does
-not have a product value of \"600\" or less in \"/etc/ssh/sshd_config\", or is
-commented out, this is a finding.
+    If \"ClientAliveCountMax\" do not exist, is not set to a value of \"0\" in
+\"/etc/ssh/sshd_config\", or is commented out, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure RHEL 8 to automatically terminate all network connections
 associated with SSH traffic at the end of a session or after 10 minutes of
 inactivity.
 
-    Modify or append the following lines in the \"/etc/ssh/sshd_config\" file
-to have a product value of \"600\" or less:
+    Modify or append the following lines in the \"/etc/ssh/sshd_config\" file:
 
-    ClientAliveInterval 600
     ClientAliveCountMax 0
 
     In order for the changes to take effect, the SSH daemon must be restarted.
@@ -68,12 +62,12 @@ to have a product value of \"600\" or less:
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000163-GPOS-00072'
-  tag satisfies: %w(SRG-OS-000163-GPOS-00072 SRG-OS-000126-GPOS-00066
-                    SRG-OS-000279-GPOS-00109)
+  tag satisfies: ['SRG-OS-000163-GPOS-00072', 'SRG-OS-000126-GPOS-00066',
+'SRG-OS-000279-GPOS-00109']
   tag gid: 'V-230244'
-  tag rid: 'SV-230244r627750_rule'
+  tag rid: 'SV-230244r743934_rule'
   tag stig_id: 'RHEL-08-010200'
-  tag fix_id: 'F-32888r567479_fix'
+  tag fix_id: 'F-32888r743933_fix'
   tag cci: ['CCI-001133']
   tag nist: ['SC-10']
 
@@ -85,7 +79,6 @@ to have a product value of \"600\" or less:
   else
     describe sshd_config do
       its('ClientAliveCountMax') { should cmp '0' }
-      its('ClientAliveInterval') { should cmp <= '600' }
     end
   end
 end

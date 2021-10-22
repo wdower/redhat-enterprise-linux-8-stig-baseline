@@ -110,6 +110,12 @@ inputs:
       - "/boot/grub2/user.cfg"
 
   # SV-230537
+  - name: ipv4_enabled
+    description: Set to 'true' if IPv4 is enabled on the system.
+    type: Boolean
+    value: true
+
+  # SV-230537
   - name: ipv6_enabled
     description: Set to 'true' if IPv6 is enabled on the system.
     type: Boolean

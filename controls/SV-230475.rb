@@ -85,7 +85,8 @@ integrity of the audit tools.
   else
     if package('aide').installed?
       audit_tools.each do |tool|
-        describe aide_conf.where { selection_line.eql?(tool) } do
+        describe "selection_line: #{tool}" do
+          subject{ aide_conf.where { selection_line.eql?(tool) } }
           its('rules.flatten') { should include 'p' }
           its('rules.flatten') { should include 'i' }
           its('rules.flatten') { should include 'n' }

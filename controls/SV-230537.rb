@@ -14,9 +14,7 @@ Requirements\", which resulted in this difference between IPv4 and IPv6.
   desc  'check', "
     Verify RHEL 8 does not respond to ICMP echoes sent to a broadcast address.
 
-    Note: If either IPv4 or IPv6 is disabled on the system, this requirement
-only applies to the active internet protocol version.
-
+    Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
     Check the value of the \"icmp_echo_ignore_broadcasts\" variable with the
 following command:
 
@@ -27,7 +25,7 @@ following command:
     If the returned line does not have a value of \"1\", a line is not
 returned, or the retuned line is commented out, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure RHEL 8 to not respond to IPv4 ICMP echoes sent to a broadcast
 address with the following command:
 
@@ -42,11 +40,12 @@ line in the appropriate file under \"/etc/sysctl.d\":
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230537'
-  tag rid: 'SV-230537r627750_rule'
+  tag rid: 'SV-230537r744039_rule'
   tag stig_id: 'RHEL-08-040230'
   tag fix_id: 'F-33181r568358_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
+
 
   if virtualization.system.eql?('docker')
     impact 0.0
@@ -54,8 +53,15 @@ line in the appropriate file under \"/etc/sysctl.d\":
       skip "Control not applicable within a container"
     end
   else
-    describe kernel_parameter('net.ipv4.icmp_echo_ignore_broadcasts') do
-      its('value') { should eq 1 }
+    if input('ipv4_enabled')
+      describe kernel_parameter('net.ipv4.icmp_echo_ignore_broadcasts') do
+        its('value') { should eq 1 }
+      end
+    else
+      impact 0.0
+      describe 'IPv4 is disabled on the system, this requirement is Not Applicable.' do
+        skip 'IPv4 is disabled on the system, this requirement is Not Applicable.'
+      end
     end
   end
 end

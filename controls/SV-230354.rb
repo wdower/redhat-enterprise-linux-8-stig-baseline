@@ -1,6 +1,6 @@
 control 'SV-230354' do
-  title "RHEL 8 must prevent a user from overriding graphical user interface
-settings."
+  title "RHEL 8 must prevent a user from overriding the session lock-delay
+setting for the graphical user interface."
   desc  "A session time-out lock is a temporary action taken when a user stops
 work and moves away from the immediate physical vicinity of the information
 system but does not log out because of the temporary nature of the absence.
@@ -22,8 +22,8 @@ a protected baseline.
   "
   desc  'rationale', ''
   desc  'check', "
-    Verify the operating system prevents a user from overriding graphical user
-interfaces.
+    Verify the operating system prevents a user from overriding settings for
+graphical user interfaces.
 
     Note: This requirement assumes the use of the RHEL 8 default graphical user
 interface, Gnome Shell. If the system does not have any graphical user
@@ -43,22 +43,14 @@ modification with the following command:
 the path is \"/etc/dconf/db/local.d\". This path must be modified if a database
 other than \"local\" is being used.
 
-    $ sudo grep -i 'idle\\|lock\\|log\\|user\\|banner'
-/etc/dconf/db/local.d/locks/*
+    $ sudo grep -i lock-delay /etc/dconf/db/local.d/locks/*
 
-    /org/gnome/desktop/session/idle-delay
-    /org/gnome/desktop/screensaver/lock-enabled
     /org/gnome/desktop/screensaver/lock-delay
-    /org/gnome/settings-daemon/plugins/media-keys/logout
-    /org/gnome/login-screen/disable-user-list
-    /org/gnome/login-screen/banner-message-text
-    /org/gnome/login-screen/banner-message-enable
-    /org/gnome/desktop/lockdown/disable-lock-screen
 
     If the command does not return at least the example result, this is a
 finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to prevent a user from overriding settings
 for graphical user interfaces.
 
@@ -71,27 +63,19 @@ file should be created under the appropriate subdirectory.
 
     $ sudo touch /etc/dconf/db/local.d/locks/session
 
-    Add the following settings to prevent non-privileged users from modifying
-them:
+    Add the following setting to prevent non-privileged users from modifying it:
 
-    /org/gnome/desktop/session/idle-delay
-    /org/gnome/desktop/screensaver/lock-enabled
     /org/gnome/desktop/screensaver/lock-delay
-    /org/gnome/settings-daemon/plugins/media-keys/logout
-    /org/gnome/login-screen/disable-user-list
-    /org/gnome/login-screen/banner-message-text
-    /org/gnome/login-screen/banner-message-enable
-    /org/gnome/desktop/lockdown/disable-lock-screen
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000029-GPOS-00010'
-  tag satisfies: %w(SRG-OS-000029-GPOS-00010 SRG-OS-000031-GPOS-00012
-                    SRG-OS-000480-GPOS-00227)
+  tag satisfies: ['SRG-OS-000029-GPOS-00010', 'SRG-OS-000031-GPOS-00012',
+'SRG-OS-000480-GPOS-00227']
   tag gid: 'V-230354'
-  tag rid: 'SV-230354r627750_rule'
+  tag rid: 'SV-230354r743990_rule'
   tag stig_id: 'RHEL-08-020080'
-  tag fix_id: 'F-32998r567809_fix'
+  tag fix_id: 'F-32998r743989_fix'
   tag cci: ['CCI-000057']
   tag nist: ['AC-11 a']
 
@@ -102,15 +86,8 @@ them:
     end
   else
     if package('gnome-desktop3').installed?
-      describe command("grep -i 'idle\\|lock\\|log\\|user\\|banner' /etc/dconf/db/local.d/locks/*") do
-        its('stdout.split') { should include  '/org/gnome/desktop/session/idle-delay' }
-        its('stdout.split') { should include  '/org/gnome/desktop/screensaver/lock-enabled' }
-        its('stdout.split') { should include  '/org/gnome/desktop/screensaver/lock-delay' }
-        its('stdout.split') { should include  '/org/gnome/settings-daemon/plugins/media-keys/logout' }
-        its('stdout.split') { should include  '/org/gnome/login-screen/disable-user-list' }
-        its('stdout.split') { should include  '/org/gnome/login-screen/banner-message-text' }
-        its('stdout.split') { should include  '/org/gnome/login-screen/banner-message-enable' }
-        its('stdout.split') { should include  '/org/gnome/desktop/lockdown/disable-lock-screen' }
+      describe command("grep -i lock-delay /etc/dconf/db/local.d/locks/*") do
+        its('stdout.split') { should include '/org/gnome/desktop/screensaver/lock-delay' }
       end
     else
       impact 0.0

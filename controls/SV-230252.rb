@@ -1,6 +1,6 @@
 control 'SV-230252' do
   title "The RHEL 8 operating system must implement DoD-approved encryption to
-protect the confidentiality of SSH connections."
+protect the confidentiality of SSH server connections."
   desc  "Without cryptographic integrity protections, information can be
 altered by unauthorized users without detection.
 
@@ -17,79 +17,47 @@ maintaining the confidentiality of the secret key used to generate the hash.
     RHEL 8 incorporates system-wide crypto policies by default. The SSH
 configuration file has no effect on the ciphers, MACs, or algorithms unless
 specifically defined in the /etc/sysconfig/sshd file. The employed algorithms
-can be viewed in the /etc/crypto-policies/back-ends/openssh.config file.
+can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.
 
-    By specifying a cipher list with the order of ciphers being in a “strongest
-to weakest” orientation, the system will automatically attempt to use the
-strongest cipher for securing SSH connections.
+    The system will attempt to use the first hash presented by the client that
+matches the server list. Listing the values \"strongest to weakest\" is a
+method to ensure the use of the strongest hash available to secure the SSH
+connection.
 
 
   "
   desc  'rationale', ''
   desc  'check', "
-    Verify the SSH daemon is configured to use only ciphers employing FIPS
-140-2-approved algorithms:
-
-    Verify that system-wide crypto policies are in effect:
-
-    $ sudo grep -i crypto_policy /etc/sysconfig/sshd
-
-    # crypto_policy=
-
-    If the \"crypto_policy\" is uncommented, this is a finding.
-
-    Verify which system-wide crypto policy is in use:
-
-    $ sudo update-crypto-policies --show
-
-    FIPS
-
-    Check that the ciphers in the back-end configurations are FIPS
+    Verify the SSH server is configured to use only ciphers employing FIPS
 140-2-approved algorithms with the following command:
 
-    $ sudo grep -i ciphers /etc/crypto-policies/back-ends/openssh.config
-/etc/crypto-policies/back-ends/opensshserver.config
+    $ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config
 
-    /etc/crypto-policies/back-ends/openssh.config:Ciphers
-aes256-ctr,aes192-ctr,aes128-ctr
+    CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
 
-/etc/crypto-policies/back-ends/opensshserver.config:CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
-
-/etc/crypto-policies/back-ends/opensshserver.config:CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
-
-    If the cipher entries in the \"openssh.config\" and
-\"opensshserver.config\" files have any ciphers other than
-\"aes256-ctr,aes192-ctr,aes128-ctr\", the order differs from the example above,
-if they are missing, or commented out, this is a finding.
+    If the cipher entries in the \"opensshserver.config\" file have any ciphers
+other than \"aes256-ctr,aes192-ctr,aes128-ctr\", the order differs from the
+example above, they are missing, or commented out, this is a finding.
   "
-  desc 'fix', "
-    Configure the RHEL 8 SSH daemon to use only ciphers employing FIPS
-140-2-approved algorithms with the following command:
+  desc  'fix', "
+    Configure the RHEL 8 SSH server to use only ciphers employing FIPS
+140-2-approved algorithms by updating the
+\"/etc/crypto-policies/back-ends/opensshserver.config\" file with the following
+line:
 
-    $ sudo fips-mode-setup --enable
-
-    Next, update the \"/etc/crypto-policies/back-ends/openssh.config\" and
-\"/etc/crypto-policies/back-ends/opensshserver.config\" files to include these
-ciphers employing FIPS 140-2-approved algorithms:
-
-    /etc/crypto-policies/back-ends/openssh.config:Ciphers
-aes256-ctr,aes192-ctr,aes128-ctr
-
-/etc/crypto-policies/back-ends/opensshserver.config:CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
-
-/etc/crypto-policies/back-ends/opensshserver.config:CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
+    -oCiphers=aes256-ctr,aes192-ctr,aes128-ctr
 
     A reboot is required for the changes to take effect.
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000250-GPOS-00093'
-  tag satisfies: %w(SRG-OS-000250-GPOS-00093 SRG-OS-000393-GPOS-00173
-                    SRG-OS-000394-GPOS-00174 SRG-OS-000125-GPOS-00065)
+  tag satisfies: ['SRG-OS-000250-GPOS-00093', 'SRG-OS-000393-GPOS-00173',
+'SRG-OS-000394-GPOS-00174', 'SRG-OS-000125-GPOS-00065']
   tag gid: 'V-230252'
-  tag rid: 'SV-230252r646869_rule'
+  tag rid: 'SV-230252r743940_rule'
   tag stig_id: 'RHEL-08-010291'
-  tag fix_id: 'F-32896r646868_fix'
+  tag fix_id: 'F-32896r743939_fix'
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
 
@@ -99,20 +67,17 @@ aes256-ctr,aes192-ctr,aes128-ctr
       skip "Control not applicable - SSH is not installed within containerized RHEL"
     end
   else
-    describe parse_config_file('/etc/sysconfig/sshd') do
-      its('CRYPTO_POLICY') { should be_nil }
+    describe parse_config_file('/etc/crypto-policies/back-ends/opensshserver.config') do
+      its('CRYPTO_POLICY') { should_not be_nil }
     end
-  
-    describe command('update-crypto-policies --show') do
-      its('stdout.strip') { should cmp 'FIPS' }
-    end
-  
-    describe file('/etc/crypto-policies/back-ends/openssh.config') do
-      its('content') { should match /Ciphers[=\\s](?=.*aes256-ctr)(?=.*aes192-ctr)(?=.*aes128-ctr)[\\s]*/ }
-    end
-  
-    describe file('/etc/crypto-policies/back-ends/opensshserver.config') do
-      its('content') { should match /Ciphers[=\\s](?=.*aes256-ctr)(?=.*aes192-ctr)(?=.*aes128-ctr)[\\s]*/ }
+
+    crypto_policy = parse_config_file('/etc/crypto-policies/back-ends/opensshserver.config')['CRYPTO_POLICY']
+
+    unless crypto_policy.nil?
+      describe parse_config(crypto_policy.gsub(/\s|'/, "\n")) do
+        its('-oCiphers') { should cmp 'aes256-ctr,aes192-ctr,aes128-ctr' }
+      end
     end
   end
 end
+

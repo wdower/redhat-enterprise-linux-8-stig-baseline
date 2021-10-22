@@ -10,49 +10,35 @@ to boot into single-user mode or make modifications to the boot menu."
   desc  'check', "
     For systems that use UEFI, this is Not Applicable.
 
-    Check to see if an encrypted root password is set. On systems that use a
-BIOS, use the following command:
+    Check to see if an encrypted grub superusers password is set. On systems
+that use a BIOS, use the following command:
 
     $ sudo grep -iw grub2_password /boot/grub2/user.cfg
 
     GRUB2_PASSWORD=grub.pbkdf2.sha512.[password_hash]
 
-    If the root password does not begin with \"grub.pbkdf2.sha512\", this is a
-finding.
-
-    Verify that a unique name is set as the \"superusers\":
-
-    $ sudo grep -iw \"superusers\" /boot/grub2/grub.cfg
-    set superusers=\"[someuniquestringhere]\"
-    export superusers
-
-    If \"superusers\" is not set to a unique name or is missing a name, this is
-a finding.
+    If the grub superusers password does not begin with \"grub.pbkdf2.sha512\",
+this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the system to require a grub bootloader password for the grub
-superuser account.
+superusers account with the grub2-setpassword command, which creates/overwrites
+the /boot/grub2/user.cfg file.
 
-    Generate an encrypted grub2 password for the grub superuser account with
+    Generate an encrypted grub2 password for the grub superusers account with
 the following command:
 
     $ sudo grub2-setpassword
     Enter password:
     Confirm password:
-
-    Edit the /boot/grub2/grub.cfg file and add or modify the following lines in
-the \"### BEGIN /etc/grub.d/01_users ###\" section:
-
-    set superusers=\"[someuniquestringhere]\"
-    export superusers
   "
   impact 0.7
   tag severity: 'high'
   tag gtitle: 'SRG-OS-000080-GPOS-00048'
   tag gid: 'V-230235'
-  tag rid: 'SV-230235r627750_rule'
+  tag rid: 'SV-230235r743925_rule'
   tag stig_id: 'RHEL-08-010150'
-  tag fix_id: 'F-32879r567452_fix'
+  tag fix_id: 'F-32879r743924_fix'
   tag cci: ['CCI-000213']
   tag nist: ['AC-3']
 
@@ -68,15 +54,10 @@ the \"### BEGIN /etc/grub.d/01_users ###\" section:
         skip 'The System is running UEFI, this control is Not Applicable.'
       end
     else
-      impact 0.7
       input('grub_user_boot_files').each do |grub_user_file|
         describe parse_config_file(grub_user_file) do
           its('GRUB2_PASSWORD') { should include 'grub.pbkdf2.sha512' }
         end
-      end
-  
-      describe parse_config_file(input('grub_main_cfg')) do
-        its('set superusers') { should_not be_empty }
       end
     end
   end

@@ -8,6 +8,8 @@ files. Executing files from untrusted file systems increases the opportunity
 for unprivileged users to attain unauthorized administrative access."
   desc  'rationale', ''
   desc  'check', "
+    For systems that use UEFI, this is Not Applicable.
+
     Verify the /boot directory is mounted with the \"nosuid\" option with the
 following command:
 
@@ -19,27 +21,34 @@ following command:
     If the /boot file system does not have the \"nosuid\" option set, this is a
 finding.
   "
-  desc 'fix', "Configure the \"/etc/fstab\" to use the \"nosuid\" option on
+  desc  'fix', "Configure the \"/etc/fstab\" to use the \"nosuid\" option on
 the /boot directory."
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230300'
-  tag rid: 'SV-230300r627750_rule'
+  tag rid: 'SV-230300r743959_rule'
   tag stig_id: 'RHEL-08-010571'
   tag fix_id: 'F-32944r567647_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
-
+  
   if virtualization.system.eql?('docker')
     impact 0.0
     describe "Control not applicable within a container" do
       skip "Control not applicable within a container"
     end
   else
-    describe mount('/boot') do
-      it { should be_mounted }
-      its('options') { should include 'nosuid' }
+    if file('/sys/firmware/efi').exist?
+      impact 0.0
+      describe 'System running UEFI' do
+        skip 'The System is running UEFI, this control is Not Applicable.'
+      end
+    else
+      describe mount('/boot') do
+        it { should be_mounted }
+        its('options') { should include 'nosuid' }
+      end
     end
   end
 end

@@ -21,35 +21,27 @@ notebook computers, smartphones, and tablets).
   "
   desc  'rationale', ''
   desc  'check', "
-    Verify that \"firewalld\" is installed and active with the following
-commands:
+    Verify that \"firewalld\" is installed with the following commands:
 
     $ sudo yum list installed firewalld
 
     firewalld.noarch     0.7.0-5.el8
 
-    $ sudo systemctl is-active firewalld
-
-    active
-
-    If the \"firewalld\" package is not installed and \"active\", ask the
-System Administrator if another firewall is installed. If no firewall is
-installed and active this is a finding.
+    If the \"firewalld\" package is not installed, ask the System Administrator
+if another firewall is installed. If no firewall is installed this is a finding.
   "
-  desc 'fix', "
-    Install \"firewalld\" and enable with the following commands:
+  desc  'fix', "
+    Install \"firewalld\" with the following command:
 
     $ sudo yum install firewalld.noarch
-
-    $ sudo systemctl enable firewalld
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000297-GPOS-00115'
   tag gid: 'V-230505'
-  tag rid: 'SV-230505r627750_rule'
+  tag rid: 'SV-230505r744020_rule'
   tag stig_id: 'RHEL-08-040100'
-  tag fix_id: 'F-33149r568262_fix'
+  tag fix_id: 'F-33149r744019_fix'
   tag cci: ['CCI-002314']
   tag nist: ['AC-17 (1)']
 
@@ -61,11 +53,6 @@ installed and active this is a finding.
   else
     describe package('firewalld') do
       it { should be_installed }
-    end
-  
-    describe systemd_service('firewalld.service') do
-      it { should be_enabled }
-      it { should be_running }
     end
   end
 end

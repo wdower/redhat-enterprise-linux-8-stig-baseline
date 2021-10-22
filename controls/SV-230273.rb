@@ -29,34 +29,33 @@ configuring the device itself (management).
     Verify the operating system has the packages required for multifactor
 authentication installed with the following commands:
 
-    $ sudo yum list installed esc openssl-pkcs11
+    $ sudo yum list installed openssl-pkcs11
 
-    esc.x86_64          1.1.2-7.el8          @AppStream
     openssl-pkcs11.x86_64          0.4.8-2.el8          @anaconda
 
-    If the \"esc\" and \"openssl-pkcs11\" packages are not installed, ask the
-administrator to indicate what type of multifactor authentication is being
-utilized and what packages are installed to support it.  If there is no
-evidence of multifactor authentication being used, this is a finding.
+    If the \"openssl-pkcs11\" package is not installed, ask the administrator
+to indicate what type of multifactor authentication is being utilized and what
+packages are installed to support it.  If there is no evidence of multifactor
+authentication being used, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to implement multifactor authentication by
-installing the required packages with the following command:
+installing the required package with the following command:
 
-    $ sudo yum install esc openssl-pkcs11
+    $ sudo yum install openssl-pkcs11
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000375-GPOS-00160'
   tag gid: 'V-230273'
-  tag rid: 'SV-230273r627750_rule'
+  tag rid: 'SV-230273r743943_rule'
   tag stig_id: 'RHEL-08-010390'
-  tag fix_id: 'F-32917r567566_fix'
+  tag fix_id: 'F-32917r743942_fix'
   tag cci: ['CCI-001948']
   tag nist: ['IA-2 (11)']
 
   smart_card_status = input('smart_card_status')
-  mfa_pkg_list = %w(esc openssl-pkcs11)
+  mfa_pkg_list = %w(openssl-pkcs11)
 
   if virtualization.system.eql?('docker')
     impact 0.0

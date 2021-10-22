@@ -56,7 +56,7 @@ commands:
   else
     describe service('rsyslog') do
       it { should be_enabled }
-      it { should be_active }
+      it { should be_running }
     end
   end
 end

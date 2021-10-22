@@ -79,8 +79,8 @@ command:
       its('value') { should eq 1 }
     end
   
-    describe command('grep -r ^kernel.dmesg_restrict /etc/sysctl.conf /etc/sysctl.d/*.conf') do
-      its('stdout') { should match /kernel.dmesg_restrict=1$/ }
+    describe parse_config(command('grep -rh ^kernel.dmesg_restrict /etc/sysctl.conf /etc/sysctl.d/*.conf').stdout.strip) do
+      its(['kernel.dmesg_restrict']) { should cmp 1 }
     end
   end
 end

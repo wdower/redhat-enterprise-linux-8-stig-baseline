@@ -52,16 +52,6 @@ before granting access to the operating system via a graphical user logon.
 interface, Gnome Shell. If the system does not have any graphical user
 interface installed, this requirement is Not Applicable.
 
-    Check to see if the operating system displays a banner at the logon screen
-with the following command:
-
-    $ sudo grep banner-message-enable /etc/dconf/db/local.d/*
-
-    banner-message-enable=true
-
-    If \"banner-message-enable\" is set to \"false\" or is missing, this is a
-finding.
-
     Check that the operating system displays the exact Standard Mandatory DoD
 Notice and Consent Banner text with the command:
 
@@ -96,24 +86,15 @@ graphical interface.
     If the banner does not match the Standard Mandatory DoD Notice and Consent
 Banner exactly, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to display the Standard Mandatory DoD Notice
 and Consent Banner before granting access to the system.
 
     Note: If the system does not have a graphical user interface installed,
 this requirement is Not Applicable.
 
-    Create a database to contain the system-wide graphical user logon settings
-(if it does not already exist) with the following command:
-
-    $ sudo touch /etc/dconf/db/local.d/01-banner-message
-
     Add the following lines to the [org/gnome/login-screen] section of the
 \"/etc/dconf/db/local.d/01-banner-message\":
-
-    [org/gnome/login-screen]
-
-    banner-message-enable=true
 
     banner-message-text='You are accessing a U.S. Government (USG) Information
 System (IS) that is provided for USG-authorized use only.\
@@ -147,11 +128,11 @@ graphical interface.
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000023-GPOS-00006'
-  tag satisfies: %w(SRG-OS-000023-GPOS-00006 SRG-OS-000228-GPOS-00088)
+  tag satisfies: ['SRG-OS-000023-GPOS-00006', 'SRG-OS-000228-GPOS-00088']
   tag gid: 'V-230226'
-  tag rid: 'SV-230226r627750_rule'
+  tag rid: 'SV-230226r743916_rule'
   tag stig_id: 'RHEL-08-010050'
-  tag fix_id: 'F-32870r567425_fix'
+  tag fix_id: 'F-32870r743915_fix'
   tag cci: ['CCI-000048']
   tag nist: ['AC-8 a']
 
@@ -164,19 +145,15 @@ graphical interface.
     end
   else
     if package('gnome-desktop3').installed?
-        describe command('grep ^banner-message-enable /etc/dconf/db/local.d/*') do
-          its('stdout.strip') { should cmp 'banner-message-enable=true' }
-        end
-    
-        describe command('grep ^banner-message-text /etc/dconf/db/local.d/*') do
-          its('stdout.strip') { should cmp banner_message_text_gui }
-        end
-      else
-        impact 0.0
-        describe 'The system does not have GNOME installed' do
-          skip "The system does not have GNOME installed, this requirement is Not
-          Applicable."
-        end
+      describe command('grep ^banner-message-text /etc/dconf/db/local.d/*') do
+        its('stdout.strip') { should cmp banner_message_text_gui }
       end
+    else
+      impact 0.0
+      describe 'The system does not have GNOME installed' do
+        skip "The system does not have GNOME installed, this requirement is Not
+        Applicable."
+      end
+    end
   end
 end

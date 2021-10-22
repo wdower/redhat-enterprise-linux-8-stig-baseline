@@ -1,7 +1,7 @@
 control 'SV-230234' do
   title "RHEL 8 operating systems booted with United Extensible Firmware
-Interface (UEFI) implemented must require authentication upon booting into
-single-user mode and maintenance."
+Interface (UEFI) must require authentication upon booting into single-user mode
+and maintenance."
   desc  "If the system does not require valid authentication before it boots
 into single-user or maintenance mode, anyone who invokes single-user or
 maintenance mode is granted privileged access to all files on the system. GRUB
@@ -11,49 +11,35 @@ to boot into single-user mode or make modifications to the boot menu."
   desc  'check', "
     For systems that use BIOS, this is Not Applicable.
 
-    Check to see if an encrypted root password is set. On systems that use
-UEFI, use the following command:
+    Check to see if an encrypted grub superusers password is set. On systems
+that use UEFI, use the following command:
 
     $ sudo grep -iw grub2_password /boot/efi/EFI/redhat/user.cfg
 
     GRUB2_PASSWORD=grub.pbkdf2.sha512.[password_hash]
 
-    If the root password does not begin with \"grub.pbkdf2.sha512\", this is a
-finding.
-
-    Verify that a unique account name is set as the \"superusers\":
-
-    $ sudo grep -iw \"superusers\" /boot/efi/EFI/redhat/grub.cfg
-    set superusers=\"[someuniquestringhere]\"
-    export superusers
-
-    If \"superusers\" is not set to a unique name or is missing a name, this is
-a finding.
+    If the grub superusers password does not begin with \"grub.pbkdf2.sha512\",
+this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the system to require a grub bootloader password for the grub
-superuser account.
+superusers account with the grub2-setpassword command, which creates/overwrites
+the /boot/efi/EFI/redhat/user.cfg file.
 
-    Generate an encrypted grub2 password for the grub superuser account with
+    Generate an encrypted grub2 password for the grub superusers account with
 the following command:
 
     $ sudo grub2-setpassword
     Enter password:
     Confirm password:
-
-    Edit the /boot/efi/EFI/redhat/grub.cfg file and add or modify the following
-lines in the \"### BEGIN /etc/grub.d/01_users ###\" section:
-
-    set superusers=\"[someuniquestringhere]\"
-    export superusers
   "
   impact 0.7
   tag severity: 'high'
   tag gtitle: 'SRG-OS-000080-GPOS-00048'
   tag gid: 'V-230234'
-  tag rid: 'SV-230234r627750_rule'
+  tag rid: 'SV-230234r743922_rule'
   tag stig_id: 'RHEL-08-010140'
-  tag fix_id: 'F-32878r567449_fix'
+  tag fix_id: 'F-32878r743921_fix'
   tag cci: ['CCI-000213']
   tag nist: ['AC-3']
 
@@ -64,15 +50,10 @@ lines in the \"### BEGIN /etc/grub.d/01_users ###\" section:
     end
   else
     if file('/sys/firmware/efi').exist?
-      impact 0.7
       input('grub_uefi_user_boot_files').each do |grub_user_file|
         describe parse_config_file(grub_user_file) do
           its('GRUB2_PASSWORD') { should include 'grub.pbkdf2.sha512' }
         end
-      end
-  
-      describe parse_config_file(input('grub_uefi_main_cfg')) do
-        its('set superusers') { should cmp '"root"' }
       end
     else
       impact 0.0

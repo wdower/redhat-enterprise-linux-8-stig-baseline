@@ -56,7 +56,7 @@ as each shell is called by adding the following line to the end of the
     end
   else
     describe command('grep -i tmux /etc/bashrc') do
-      its('stdout.strip') { should cmp '[ -n \"$PS1\" -a -z \"$TMUX\" ] && exec tmux' }
+      its('stdout.strip') { should cmp '[ -n "$PS1" -a -z "$TMUX" ] && exec tmux' }
     end
   end
 end
