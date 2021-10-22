@@ -68,20 +68,16 @@ line:
       skip "Control not applicable - SSH is not installed within containerized RHEL"
     end
   else
-    describe parse_config_file('/etc/sysconfig/sshd') do
-      its('CRYPTO_POLICY') { should be_nil }
+    describe parse_config_file('/etc/crypto-policies/back-ends/opensshserver.config') do
+      its('CRYPTO_POLICY') { should_not be_nil }
     end
-  
-    describe command('update-crypto-policies --show') do
-      its('stdout.strip') { should cmp 'FIPS' }
-    end
-  
-    describe file('/etc/crypto-policies/back-ends/openssh.config') do
-      its('content') { should match /MAC[Ss][=\s]hmac-sha2-512,hmac-sha2-256[\s]*/ }
-    end
-  
-    describe file('/etc/crypto-policies/back-ends/opensshserver.config') do
-      its('content') { should match /MAC[Ss][=\s]hmac-sha2-512,hmac-sha2-256[\s]*/ }
+
+    crypto_policy = parse_config_file('/etc/crypto-policies/back-ends/opensshserver.config')['CRYPTO_POLICY']
+
+    unless crypto_policy.nil?
+      describe parse_config(crypto_policy.gsub(/\s|'/, "\n")) do
+        its('-oMACS') { should cmp 'hmac-sha2-512,hmac-sha2-256' }
+      end
     end
   end
 end

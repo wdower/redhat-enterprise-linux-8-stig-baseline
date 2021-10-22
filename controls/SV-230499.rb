@@ -66,7 +66,7 @@ firewire-core kernel module.
       skip "Control not applicable within a container"
     end
   else
-    describe kernel_module('firewire-core') do
+    describe kernel_module('firewire_core') do
       it { should be_disabled }
       it { should be_blacklisted }
     end

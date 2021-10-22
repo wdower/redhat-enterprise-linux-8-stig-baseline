@@ -79,8 +79,8 @@ command:
       its('value') { should eq 2 }
     end
   
-    describe command('grep -r ^kernel.perf_event_paranoid /etc/sysctl.conf /etc/sysctl.d/*.conf') do
-      its('stdout') { should match /kernel.perf_event_paranoid=2$/ }
+    describe parse_config(command('grep -rh ^kernel.perf_event_paranoid /etc/sysctl.conf /etc/sysctl.d/*.conf').stdout.strip) do
+      its(['kernel.perf_event_paranoid']) { should cmp 2 }
     end
   end
 end

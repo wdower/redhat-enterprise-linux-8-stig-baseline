@@ -57,7 +57,7 @@ line:
     end
   else
     describe command('grep -i lock-command /etc/tmux.conf') do
-      its('stdout.strip') { should cmp 'vlock' }
+      its('stdout.strip') { should cmp 'set -g lock-command vlock' }
     end
   end
 end
