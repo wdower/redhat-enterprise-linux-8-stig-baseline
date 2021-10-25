@@ -1,13 +1,13 @@
 control 'SV-230236' do
   title "RHEL 8 operating systems must require authentication upon booting into
-emergency or rescue modes."
+rescue mode."
   desc  "If the system does not require valid root authentication before it
 boots into emergency or rescue mode, anyone who invokes emergency or rescue
 mode is granted privileged access to all files on the system."
   desc  'rationale', ''
   desc  'check', "
-    Check to see if the system requires authentication for rescue or emergency
-mode with the following command:
+    Check to see if the system requires authentication for rescue mode with the
+following command:
 
     $ sudo grep sulogin-shell /usr/lib/systemd/system/rescue.service
 
@@ -17,9 +17,9 @@ mode with the following command:
 \"/usr/lib/systemd/systemd-sulogin-shell rescue\", commented out, or missing,
 this is a finding.
   "
-  desc 'fix', "
-    Configure the system to require authentication upon booting into emergency
-or rescue mode by adding the following line to the
+  desc  'fix', "
+    Configure the system to require authentication upon booting into rescue
+mode by adding the following line to the
 \"/usr/lib/systemd/system/rescue.service\" file.
 
     ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
@@ -28,9 +28,9 @@ or rescue mode by adding the following line to the
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000080-GPOS-00048'
   tag gid: 'V-230236'
-  tag rid: 'SV-230236r627750_rule'
+  tag rid: 'SV-230236r743928_rule'
   tag stig_id: 'RHEL-08-010151'
-  tag fix_id: 'F-32880r567455_fix'
+  tag fix_id: 'F-32880r743927_fix'
   tag cci: ['CCI-000213']
   tag nist: ['AC-3']
 

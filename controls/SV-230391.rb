@@ -53,9 +53,9 @@ configuring the \"max_log_file_action\" parameter in the
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000047-GPOS-00023'
   tag gid: 'V-230391'
-  tag rid: 'SV-230391r627750_rule'
+  tag rid: 'SV-230391r743998_rule'
   tag stig_id: 'RHEL-08-030050'
-  tag fix_id: 'F-33035r567920_fix'
+  tag fix_id: 'F-33035r743997_fix'
   tag cci: ['CCI-000140']
   tag nist: ['AU-5 b']
 

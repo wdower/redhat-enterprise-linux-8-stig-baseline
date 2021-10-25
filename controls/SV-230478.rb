@@ -10,9 +10,9 @@ storage capacity.
     RHEL 8 installation media provides \"rsyslogd\".  \"rsyslogd\" is a system
 utility providing support for message logging.  Support for both internet and
 UNIX domain sockets enables this utility to support both local and remote
-logging.  Couple this utility with \"gnutls\" (which is a secure communications
-library implementing the SSL, TLS and DTLS protocols), and you have a method to
-securely encrypt and off-load auditing.
+logging.  Couple this utility with \"rsyslog-gnutls\" (which is a secure
+communications library implementing the SSL, TLS and DTLS protocols), and you
+have a method to securely encrypt and off-load auditing.
 
     Rsyslog provides three ways to forward message: the traditional UDP
 transport, which is extremely lossy but standard; the plain TCP based
@@ -30,28 +30,28 @@ currently available only as part of the rsyslogd 3.15.0 and above.
     Verify the operating system has the packages required for encrypting
 offloaded audit logs installed with the following commands:
 
-    $ sudo yum list installed gnutls
+    $ sudo yum list installed rsyslog-gnutls
 
-    gnutls.x86_64          3.6.8-9.el8          @anaconda
+    rsyslog-gnutls.x86_64          8.1911.0-3.el8          @AppStream
 
-    If the \"gnutls\" package is not installed, ask the administrator to
-indicate how audit logs are being encrypted during offloading and what packages
-are installed to support it.  If there is no evidence of audit logs being
-encrypted during offloading, this is a finding.
+    If the \"rsyslog-gnutls\" package is not installed, ask the administrator
+to indicate how audit logs are being encrypted during offloading and what
+packages are installed to support it.  If there is no evidence of audit logs
+being encrypted during offloading, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to encrypt offloaded audit logs by
 installing the required packages with the following command:
 
-    $ sudo yum install gnutls
+    $ sudo yum install rsyslog-gnutls
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230478'
-  tag rid: 'SV-230478r627750_rule'
+  tag rid: 'SV-230478r744011_rule'
   tag stig_id: 'RHEL-08-030680'
-  tag fix_id: 'F-33122r568181_fix'
+  tag fix_id: 'F-33122r744010_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
 
@@ -61,7 +61,7 @@ installing the required packages with the following command:
       skip "Control not applicable within a container"
     end
   else
-    describe package('gnutls') do
+    describe package('rsyslog-gnutls') do
       it { should be_installed }
     end
   end

@@ -93,7 +93,7 @@ following command:
     end
   else
     describe command('fipscheck') do
-      its('stdout') { should match /fips mode is on/ }
+      its('stdout.strip') { should match /fips mode is on/ }
     end
   
     grub_config = command('grub2-editenv - list').stdout
@@ -103,7 +103,7 @@ following command:
     end
   
     describe file('/proc/sys/crypto/fips_enabled') do
-      its('content') { should cmp '1' }
+      its('content.strip') { should cmp '1' }
     end
   end
 end

@@ -1,7 +1,5 @@
 control 'SV-230523' do
-  title "The RHEL 8 fapolicy module must be configured to employ a deny-all,
-permit-by-exception policy to allow the execution of authorized software
-programs."
+  title 'The RHEL 8 fapolicy module must be installed.'
   desc  "The organization must identify authorized software programs and permit
 execution of authorized software. The process used to identify software
 programs that are authorized to execute on organizational information systems
@@ -23,95 +21,38 @@ determines access rights to files based on attributes of the process and file.
 It can be used to either blacklist or whitelist processes or file access.
 
     Proceed with caution with enforcing the use of this daemon. Improper
-configuration may render the system non-functional.
+configuration may render the system non-functional. The \"fapolicyd\" API is
+not namespace aware and can cause issues when launching or running containers.
 
 
   "
   desc  'rationale', ''
   desc  'check', "
-    Verify the RHEL 8 \"fapolicyd\" is enabled and employs a deny-all,
-permit-by-exception policy.
+    Verify the RHEL 8 \"fapolicyd\" is installed.
 
-    Check that \"fapolicyd\" is installed, running, and in enforcing mode with
-the following commands:
+    Check that \"fapolicyd\" is installed with the following command:
 
     $ sudo yum list installed fapolicyd
 
     Installed Packages
     fapolicyd.x86_64
 
-    $ sudo systemctl status fapolicyd.service
-
-    fapolicyd.service - File Access Policy Daemon
-    Loaded: loaded (/usr/lib/systemd/system/fapolicyd.service; enabled; vendor
-preset: disabled)
-    Active: active (running)
-
-    $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
-
-    permissive = 0
-
-    Check that fapolicyd employs a deny-all policy on system mounts with the
-following commands:
-
-    $ sudo tail /etc/fapolicyd/fapolicyd.rules
-
-    allow exe=/usr/bin/python3.4 dir=execdirs ftype=text/x-pyton
-    deny_audit pattern ld_so all
-    deny all all
-
-    $ sudo cat /etc/fapolicyd/fapolicyd.mounts
-
-    /dev/shm
-    /run
-    /sys/fs/cgroup
-    /
-    /home
-    /boot
-    /run/user/42
-    /run/user/1000
-
-    If fapolicyd is not running in enforcement mode on all system mounts with a
-deny-all, permit-by-exception policy, this is a finding.
+    If fapolicyd is not installed, this is a finding.
   "
-  desc 'fix', "
-    Configure RHEL 8 to employ a deny-all, permit-by-exception application
-whitelisting policy with \"fapolicyd\" using the following commands:
-
-    Install and enable \"fapolicyd\":
+  desc  'fix', "
+    Install \"fapolicyd\" with the following command:
 
     $ sudo yum install fapolicyd.x86_64
-
-    $ sudo mount | egrep '^tmpfs| ext4| ext3| xfs' | awk '{ printf \"%s\
-    \", $3 }' >> /etc/fapolicyd/fapolicyd.mounts
-
-    $ sudo systemctl enable --now fapolicyd
-
-    With the \"fapolicyd\" installed and enabled, configure the daemon to
-function in permissive mode until the whitelist is built correctly to avoid
-system lockout. Do this by editing the \"/etc/fapolicyd/fapolicyd.conf\" file
-with the following line:
-
-    permissive = 1
-
-    Build the whitelist in the \"/etc/fapolicyd/fapolicyd.rules\" file ensuring
-the last rule is \"deny all all\".
-
-    Once it is determined the whitelist is built correctly, set the fapolicyd
-to enforcing mode by editing the \"permissive\" line in the
-/etc/fapolicyd/fapolicyd.conf file.
-
-    permissive = 0
   "
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000368-GPOS-00154'
-  tag satisfies: %w(SRG-OS-000368-GPOS-00154 SRG-OS-000370-GPOS-00155
-                    SRG-OS-000480-GPOS-00232)
+  tag satisfies: ['SRG-OS-000368-GPOS-00154', 'SRG-OS-000370-GPOS-00155',
+'SRG-OS-000480-GPOS-00232']
   tag gid: 'V-230523'
-  tag rid: 'SV-230523r627750_rule'
+  tag rid: 'SV-230523r744023_rule'
   tag stig_id: 'RHEL-08-040135'
-  tag fix_id: 'F-33167r568316_fix'
+  tag fix_id: 'F-33167r744022_fix'
   tag cci: ['CCI-001764']
   tag nist: ['CM-7 (2)']
 
@@ -124,22 +65,5 @@ to enforcing mode by editing the \"permissive\" line in the
     describe package('fapolicyd') do
       it { should be_installed }
     end
-  
-    describe service('fapolicyd') do
-      it { should be_enabled }
-      it { should be_running }
-    end
-  
-    describe parse_config_file('/etc/fapolicyd/fapolicyd.conf') do
-      its('permissive') { should eq 0 }
-    end
-  
-    describe file('/etc/fapolicyd/fapolicyd.rules') do
-      it { should exist }
-    end
-  
-    describe file('/etc/fapolicyd/fapolicyd.rules').content.strip.split("\n")[-1] do
-      it { should cmp 'deny all all' }
-    end if file('/etc/fapolicyd/fapolicyd.rules').exist?
   end
 end

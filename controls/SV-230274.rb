@@ -26,16 +26,18 @@ multifactor authentication.
     Check to see if Online Certificate Status Protocol (OCSP) is enabled and
 using the proper digest value on the system with the following command:
 
-    $ sudo grep certificate_verification /etc/sssd/sssd.conf | grep -v \"^#\"
+    $ sudo grep certificate_verification /etc/sssd/sssd.conf
+/etc/sssd/conf.d/*.conf | grep -v \"^#\"
 
     certificate_verification = ocsp_dgst=sha1
 
-    If the certificate_verification line is missing \"ocsp_dgst=sha1\", ask the
-administrator to indicate what type of multifactor authentication is being
-utilized and how the system implements certificate status checking.  If there
-is no evidence of certificate status checking being used, this is a finding.
+    If the certificate_verification line is missing from the [sssd] section, or
+is missing \"ocsp_dgst=sha1\", ask the administrator to indicate what type of
+multifactor authentication is being utilized and how the system implements
+certificate status checking.  If there is no evidence of certificate status
+checking being used, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Configure the operating system to implement certificate status checking for
 multifactor authentication.
 
@@ -54,9 +56,9 @@ restart the \"sssd\" service, run the following command:
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000375-GPOS-00160'
-  tag satisfies: %w(SRG-OS-000375-GPOS-00160 SRG-OS-000377-GPOS-00162)
+  tag satisfies: ['SRG-OS-000375-GPOS-00160', 'SRG-OS-000377-GPOS-00162']
   tag gid: 'V-230274'
-  tag rid: 'SV-230274r627750_rule'
+  tag rid: 'SV-230274r743945_rule'
   tag stig_id: 'RHEL-08-010400'
   tag fix_id: 'F-32918r567569_fix'
   tag cci: ['CCI-001948']
@@ -68,8 +70,16 @@ restart the \"sssd\" service, run the following command:
       skip "Control not applicable within a container"
     end
   else
-    describe ini('/etc/sssd/sssd.conf') do
-      its('sssd.certificate_verification') { should cmp 'ocsp_dgst=sha1' }
+    describe file('/etc/sssd/sssd.conf') do
+      it { should exist }
+    end
+
+    sssd_conf_file_contents = command("cat /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf").stdout.strip
+
+    unless sssd_conf_file_contents.empty?
+      describe ini({ command: 'cat /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf'}) do
+        its('sssd.certificate_verification') { should cmp 'ocsp_dgst=sha1' }
+      end
     end
   end
 end

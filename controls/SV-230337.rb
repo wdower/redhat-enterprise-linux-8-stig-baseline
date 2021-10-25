@@ -21,34 +21,8 @@ directory must be set with the \"dir\" option.
   "
   desc  'rationale', ''
   desc  'check', "
-    Check that the system locks an account after three unsuccessful logon
-attempts within a period of 15 minutes until released by an administrator with
-the following commands:
-
     Note: This check applies to RHEL versions 8.2 or newer, if the system is
 RHEL version 8.0 or 8.1, this check is not applicable.
-
-    Verify the pam_faillock.so module is present in the
-\"/etc/pam.d/system-auth\" and \" /etc/pam.d/password-auth\" files:
-
-    $ sudo grep pam_faillock.so /etc/pam.d/system-auth /etc/pam.d/password-auth
-
-    /etc/pam.d/system-auth:auth               required
-           pam_faillock.so preauth
-    /etc/pam.d/system-auth:auth               required
-           pam_faillock.so authfail
-    /etc/pam.d/system-auth:account        required
-       pam_faillock.so
-    /etc/pam.d/password-auth:auth          required
-        pam_faillock.so preauth
-    /etc/pam.d/password-auth:auth          required
-        pam_faillock.so authfail
-    /etc/pam.d/password-auth:account   required
-    pam_faillock.so preauth
-
-    If the pam_failllock.so module is not present in the
-\"/etc/pam.d/system-auth\" and \" /etc/pam.d/password-auth\" files, this is a
-finding.
 
     Verify the \"/etc/security/faillock.conf\" file is configured to lock an
 account until released by an administrator after three unsuccessful logon
@@ -65,13 +39,6 @@ out, this is a finding.
     Configure the operating system to lock an account until released by an
 administrator when three unsuccessful logon attempts occur in 15 minutes.
 
-    Add/Modify the appropriate sections of the \"/etc/pam.d/system-auth\" and
-\"/etc/pam.d/password-auth\" files to match the following lines:
-
-    auth required pam_faillock.so preauth
-    auth required pam_faillock.so authfail
-    account required pam_faillock.so
-
     Add/Modify the \"/etc/security/faillock.conf\" file to match the following
 line:
 
@@ -80,11 +47,11 @@ line:
   impact 0.5
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000021-GPOS-00005'
-  tag satisfies: %w(SRG-OS-000021-GPOS-00005 SRG-OS-000329-GPOS-00128)
+  tag satisfies: ['SRG-OS-000021-GPOS-00005', 'SRG-OS-000329-GPOS-00128']
   tag gid: 'V-230337'
-  tag rid: 'SV-230337r627750_rule'
+  tag rid: 'SV-230337r743972_rule'
   tag stig_id: 'RHEL-08-020015'
-  tag fix_id: 'F-32981r567758_fix'
+  tag fix_id: 'F-32981r743971_fix'
   tag cci: ['CCI-000044']
   tag nist: ['AC-7 a']
 
@@ -96,18 +63,6 @@ line:
       skip 'The release is lower than 8.2; this control is Not Applicable.'
     end
   else
-    describe pam('/etc/pam.d/password-auth') do
-      its('lines') { should match_pam_rule('auth required pam_faillock.so preauth') }
-      its('lines') { should match_pam_rule('auth required pam_faillock.so authfail') }
-      its('lines') { should match_pam_rule('account required pam_faillock.so') }
-    end
-
-    describe pam('/etc/pam.d/system-auth') do
-      its('lines') { should match_pam_rule('auth required pam_faillock.so preauth') }
-      its('lines') { should match_pam_rule('auth required pam_faillock.so authfail') }
-      its('lines') { should match_pam_rule('account required pam_faillock.so') }
-    end
-
     describe.one do
       describe parse_config_file('/etc/security/faillock.conf') do
         its('unlock_time') { should cmp 0 }

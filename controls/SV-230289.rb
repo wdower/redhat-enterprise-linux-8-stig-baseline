@@ -12,16 +12,16 @@ authenticates with the following command:
 
     $ sudo grep -i compression /etc/ssh/sshd_config
 
-    Compression no
+    Compression delayed
 
-    If the \"Compression\" keyword is set to \"yes\", \"delayed\", is missing,
-or the returned line is commented out, this is a finding.
+    If the \"Compression\" keyword is set to \"yes\", is missing, or the
+returned line is commented out, this is a finding.
   "
-  desc 'fix', "
+  desc  'fix', "
     Uncomment the \"Compression\" keyword in \"/etc/ssh/sshd_config\" (this
 file may be named differently or be in a different location if using a version
 of SSH that is provided by a third-party vendor) on the system and set the
-value to \"no\":
+value to \"delayed\" or \"no\":
 
     Compression no
 
@@ -31,9 +31,9 @@ value to \"no\":
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230289'
-  tag rid: 'SV-230289r627750_rule'
+  tag rid: 'SV-230289r743954_rule'
   tag stig_id: 'RHEL-08-010510'
-  tag fix_id: 'F-32933r567614_fix'
+  tag fix_id: 'F-32933r743953_fix'
   tag cci: ['CCI-000366']
   tag nist: ['CM-6 b']
 
@@ -44,7 +44,7 @@ value to \"no\":
     end
   else
     describe sshd_config do
-      its('Compression') { should cmp 'no' }
+      its('Compression') { should match /no|delayed/ }
     end
   end
 end

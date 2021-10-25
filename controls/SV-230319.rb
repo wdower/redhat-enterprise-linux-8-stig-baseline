@@ -1,9 +1,9 @@
 control 'SV-230319' do
   title "All RHEL 8 world-writable directories must be group-owned by root,
 sys, bin, or an application group."
-  desc  "If a world-writable directory has the sticky bit set and is not
-group-owned by root, sys, bin, or an application Group Identifier (GID),
-unauthorized users may be able to modify files created by others.
+  desc  "If a world-writable directory is not group-owned by root, sys, bin, or
+an application Group Identifier (GID), unauthorized users may be able to modify
+files created by others.
 
     The only authorized public directories are those temporary directories
 supplied with the system or those designed to be temporary file repositories.
@@ -31,7 +31,7 @@ group."
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000480-GPOS-00227'
   tag gid: 'V-230319'
-  tag rid: 'SV-230319r627750_rule'
+  tag rid: 'SV-230319r743961_rule'
   tag stig_id: 'RHEL-08-010710'
   tag fix_id: 'F-32963r567704_fix'
   tag cci: ['CCI-000366']

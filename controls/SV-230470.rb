@@ -50,8 +50,8 @@ is not applicable.
     If the \"AuditBackend\" entry does not equal \"LinuxAudit\", is missing, or
 the line is commented out, this is a finding.
   "
-  desc 'fix', "
-    Configure RHEL 8 to enable Linux audit logging of the USBGuad daemon by
+  desc  'fix', "
+    Configure RHEL 8 to enable Linux audit logging of the USBGuard daemon by
 adding or modifying the following line in
 \"/etc/usbguard/usbguard-daemon.conf\":
 
@@ -60,11 +60,11 @@ adding or modifying the following line in
   impact 0.3
   tag severity: 'low'
   tag gtitle: 'SRG-OS-000062-GPOS-00031'
-  tag satisfies: %w(SRG-OS-000062-GPOS-00031 SRG-OS-000471-GPOS-00215)
+  tag satisfies: ['SRG-OS-000062-GPOS-00031', 'SRG-OS-000471-GPOS-00215']
   tag gid: 'V-230470'
-  tag rid: 'SV-230470r627750_rule'
+  tag rid: 'SV-230470r744006_rule'
   tag stig_id: 'RHEL-08-030603'
-  tag fix_id: 'F-33114r568157_fix'
+  tag fix_id: 'F-33114r744005_fix'
   tag cci: ['CCI-000169']
   tag nist: ['AU-12 a']
 

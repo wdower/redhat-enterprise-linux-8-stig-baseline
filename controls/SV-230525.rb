@@ -22,16 +22,7 @@ mitigate DoS attacks.
   desc  'rationale', ''
   desc  'check', "
     Verify \"nftables\" is configured to allow rate limits on any connection to
-the system with the following commands:
-
-    Check that the \"nftables.service\" is active and running:
-
-    $ sudo systemctl status nftables.service
-
-    nftables.service - Netfilter Tables
-    Loaded: loaded (/usr/lib/systemd/system/nftables.service; enabled; vendor
-preset: disabled)
-    Active: active (running)
+the system with the following command:
 
     Verify \"firewalld\" has \"nftables\" set as the default backend:
 
@@ -40,19 +31,10 @@ preset: disabled)
     # FirewallBackend
     FirewallBackend=nftables
 
-    If the \"nftables\" is not active, running and set as the
-\"firewallbackend\" default, this is a finding.
+    If the \"nftables\" is not set as the \"firewallbackend\" default, this is
+a finding.
   "
-  desc 'fix', "
-    Install \"nftables\" packages onto the host with the following commands:
-
-    $ sudo yum install nftables.x86_64     1:0.9.0-14.el8
-
-    Configure the \"nftables\" service to automatically start after reboot with
-the following command:
-
-    $ sudo systemctl enable nftables.service
-
+  desc  'fix', "
     Configure \"nftables\" to be the default \"firewallbackend\" for
 \"firewalld\" by adding or editing the following line in
 \"etc/firewalld/firewalld.conf\":
@@ -66,9 +48,9 @@ attacks on impacted network interfaces.
   tag severity: 'medium'
   tag gtitle: 'SRG-OS-000420-GPOS-00186'
   tag gid: 'V-230525'
-  tag rid: 'SV-230525r627750_rule'
+  tag rid: 'SV-230525r744029_rule'
   tag stig_id: 'RHEL-08-040150'
-  tag fix_id: 'F-33169r568322_fix'
+  tag fix_id: 'F-33169r744028_fix'
   tag cci: ['CCI-002385']
   tag nist: ['SC-5']
 
@@ -78,10 +60,6 @@ attacks on impacted network interfaces.
       skip "Control not applicable within a container"
     end
   else
-    describe systemd_service('nftables.service') do
-      it { should be_running }
-    end
-  
     describe parse_config_file('/etc/firewalld/firewalld.conf') do
       its('FirewallBackend') { should eq 'nftables' }
     end

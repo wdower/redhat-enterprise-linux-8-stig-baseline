@@ -46,7 +46,7 @@ to remove any instances of tmux."
     end
   else
     describe command('grep -i tmux /etc/shells') do
-      it { should be nil }
+      its('stdout.strip') { should be_empty }
     end
   end
 end
