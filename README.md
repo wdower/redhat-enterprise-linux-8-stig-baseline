@@ -23,7 +23,7 @@ While the RHEL8 STIG automation profile check was developed to provide technical
 ### Update History 
 | Guidance Name  | Guidance Version | Guidance Location                            | Profile Version | Profile Release Date | STIG EOL    | Profile EOL |
 |---------------------------------------|------------------|--------------------------------------------|-----------------|----------------------|-------------|-------------|
-| Red Hat Enterprise Linux 8 STIG Benchmark  | v1r3    | https://public.cyber.mil/stigs/downloads/  |         2.0.0          |      | NA | NA |
+| Red Hat Enterprise Linux 8 STIG Benchmark  | v1r3    | https://public.cyber.mil/stigs/downloads/  |         2.0.1          |      | NA | NA |
 
 
 ## Getting Started
