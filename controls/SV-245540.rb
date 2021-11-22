@@ -42,7 +42,7 @@ Security for Linux (ENSL) in conjunction with SELinux.
     end
   else
     describe package('mcafeetp') do
-      its { should be_installed }
+      it { should be_installed }
     end
 
     describe processes('mfetpd') do
