@@ -59,7 +59,7 @@ path, by default this location is usually \"/var/log/audit\".
       skip "Control not applicable within a container"
     end
   else
-    log_dir = auditd_conf('/etc/audit/auditd.conf').log_file.split('/')[1..-2].join('/')
+    log_dir = auditd_conf('/etc/audit/auditd.conf').log_file.split('/')[0..-2].join('/')
     describe directory(log_dir) do
       its('owner') { should eq 'root' }
     end

@@ -19,13 +19,15 @@ The requirements associated with the <b>RHEL8</b> STIG are derived from the [Nat
 While the RHEL8 STIG automation profile check was developed to provide technical guidance to validate information with security systems such as applications, the guidance applies to all organizations that need to meet internal security as well as compliance standards.
 
 ### This STIG Automated Compliance Validation Profile was developed based upon:
+
 - RHEL8 Security Technical Implementation Guide
-### Update History 
-| Guidance Name  | Guidance Version | Guidance Location                            | Profile Version | Profile Release Date | STIG EOL    | Profile EOL |
-|---------------------------------------|------------------|--------------------------------------------|-----------------|----------------------|-------------|-------------|
-| Red Hat Enterprise Linux 8 STIG Benchmark  | v1r3    | https://public.cyber.mil/stigs/downloads/  |         2.0.1          |      | NA | NA |
 
+### Update History
 
+| Guidance Name                             | Guidance Version | Guidance Location                         | Profile Version | Profile Release Date | STIG EOL | Profile EOL |
+| ----------------------------------------- | ---------------- | ----------------------------------------- | --------------- | -------------------- | -------- | ----------- |
+| Red Hat Enterprise Linux 8 STIG Benchmark | v1r3             | https://public.cyber.mil/stigs/downloads/ | 2.0.1           | 09/02/2021           | NA       | NA          |
+| Red Hat Enterprise Linux 8 STIG Benchmark | v1r3             | https://public.cyber.mil/stigs/downloads/ | 2.0.2           | 12/08/2021           | NA       | NA          |
 ## Getting Started
 
 ### Requirements
