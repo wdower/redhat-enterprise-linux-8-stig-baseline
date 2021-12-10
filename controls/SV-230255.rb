@@ -53,7 +53,12 @@ encryption by editing the following line in the
   tag cci: ['CCI-001453']
   tag nist: ['AC-17 (2)']
 
-  describe parse_config_file('/etc/crypto-policies/back-ends/opensslcnf.config') do
-    its('MinProtocol') { should eq 'TLSv1.2' }
+  describe.one do
+    describe parse_config_file('/etc/crypto-policies/back-ends/opensslcnf.config') do
+      its('MinProtocol') { should be_in ['TLSv1.2', 'TLSv1.3'] }
+    end
+    describe parse_config_file('/etc/crypto-policies/back-ends/opensslcnf.config') do
+      its(['TLS.MinProtocol']) { should be_in ['TLSv1.2', 'TLSv1.3'] }
+    end
   end
 end
