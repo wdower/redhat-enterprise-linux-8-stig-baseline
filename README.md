@@ -925,6 +925,10 @@ Defense Information Systems Agency (DISA) https://www.disa.mil/
 
 STIG support by DISA Risk Management Team and Cyber Exchange https://public.cyber.mil/
 
+## Feedback and Support
+
+For questions or comments regarding the validation profile, please contact the DISA SD DevSecOps Helpdesk: disa.meade.sd.mbx.devsecops-mailbox@mail.mil
+
 ## Legal Notices
 
 Copyright © 2020 Defense Information Systems Agency (DISA)
