@@ -53,6 +53,8 @@ line:
   tag cci: ['CCI-000044']
   tag nist: ['AC-7 a']
 
+  unsuccessful_attempts = input('unsuccessful_attempts')
+
   if os.release.to_f <= 8.2
     impact 0.0
     describe "The release is #{os.release}" do
@@ -60,7 +62,7 @@ line:
     end
   else
     describe parse_config_file('/etc/security/faillock.conf') do
-      its('deny') { should cmp <= 3 }
+      its('deny') { should cmp <= unsuccessful_attempts }
       its('deny') { should_not cmp 0 }
     end
   end
