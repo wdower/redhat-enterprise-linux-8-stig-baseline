@@ -39,9 +39,16 @@ the /boot/efi directory."
       skip "Control not applicable within a container"
     end
   else
-    describe mount('/boot/efi') do
-      it { should be_mounted }
-      its('options') { should include 'nosuid' }
+    if file('/sys/firmware/efi').exist?
+      describe mount('/boot/efi') do
+        it { should be_mounted }
+        its('options') { should include 'nosuid' }
+      end
+    else
+      impact 0.0
+      describe 'System running BIOS' do
+        skip 'The System is running BIOS, this control is Not Applicable.'
+      end
     end
   end
 end

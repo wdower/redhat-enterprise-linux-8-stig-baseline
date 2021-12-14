@@ -4,7 +4,7 @@ maintainer: DISA DevSecOps Team
 copyright: Defense Information Systems Agency (DISA)
 license: Apache-2.0
 summary: "This Security Technical Implementation Guide is published as a tool to improve the security of Department of Defense (DoD) information systems. The requirements are derived from the National Institute of Standards and Technology (NIST) 800-53 and related documents. Comments or proposed revisions to this document should be sent via email to the following address: disa.stig_spt@mail.mil."
-version: 2.0.2
+version: 2.1.0
 inspec_version: ">= 4.0"
 
 inputs:
@@ -192,11 +192,35 @@ inputs:
     type: String
     value: "/etc/sssd/pki/sssd_auth_ca_db.pem"
 
-    #SV-230356
+  #SV-230333
+  - name: unsuccessful_attempts
+    description: Maximum number of unsuccessful attempts before lockout
+    type: Numeric
+    value: 3
+
+  #SV-230353
+  - name: system_inactivity_timeout
+    description: Maximum system inactivity timeout (time in seconds).
+    type: Numeric
+    value: 900
+
+  #SV-230356
   - name: max_retry
     description: Maximum number of retry attempts for login
     type: Numeric
     value: 3
+
+  #SV-230363
+  - name: difok
+    description: Minimum number of characters that must be different from previous password
+    type: Numeric
+    value: 8
+
+  #SV-230373
+  - name: days_of_inactivity
+    description: Maximum number of days if account inactivity before account lockout
+    type: Numeric
+    value: 35
 
   - name: temporary_accounts
     description: Temporary user accounts

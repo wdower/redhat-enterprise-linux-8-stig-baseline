@@ -28,6 +28,8 @@ While the RHEL8 STIG automation profile check was developed to provide technical
 | ----------------------------------------- | ---------------- | ----------------------------------------- | --------------- | -------------------- | -------- | ----------- |
 | Red Hat Enterprise Linux 8 STIG Benchmark | v1r3             | https://public.cyber.mil/stigs/downloads/ | 2.0.1           | 09/02/2021           | NA       | NA          |
 | Red Hat Enterprise Linux 8 STIG Benchmark | v1r3             | https://public.cyber.mil/stigs/downloads/ | 2.0.2           | 12/08/2021           | NA       | NA          |
+| Red Hat Enterprise Linux 8 STIG Benchmark | v1r3             | https://public.cyber.mil/stigs/downloads/ | 2.1.0           | 12/14/2021           | NA       | NA          |
+
 ## Getting Started
 
 ### Requirements
@@ -154,6 +156,12 @@ Update the following `Inputs` in `inspec.yml` if the default values differ in yo
       - "/boot/grub2/user.cfg"
 
   # SV-230537
+  - name: ipv4_enabled
+    description: Set to 'true' if IPv4 is enabled on the system.
+    type: Boolean
+    value: true
+
+  # SV-230537
   - name: ipv6_enabled
     description: Set to 'true' if IPv6 is enabled on the system.
     type: Boolean
@@ -231,11 +239,35 @@ Update the following `Inputs` in `inspec.yml` if the default values differ in yo
     type: String
     value: "/etc/sssd/pki/sssd_auth_ca_db.pem"
 
-    #SV-230356
+  #SV-230333
+  - name: unsuccessful_attempts
+    description: Maximum number of unsuccessful attempts before lockout
+    type: Numeric
+    value: 3
+
+  #SV-230353
+  - name: system_inactivity_timeout
+    description: Maximum system inactivity timeout (time in seconds).
+    type: Numeric
+    value: 900
+
+  #SV-230356
   - name: max_retry
     description: Maximum number of retry attempts for login
     type: Numeric
     value: 3
+
+  #SV-230363
+  - name: difok
+    description: Minimum number of characters that must be different from previous password
+    type: Numeric
+    value: 8
+
+  #SV-230373
+  - name: days_of_inactivity
+    description: Maximum number of days if account inactivity before account lockout
+    type: Numeric
+    value: 35
 
   - name: temporary_accounts
     description: Temporary user accounts
@@ -333,7 +365,6 @@ Update the following `Inputs` in `inspec.yml` if the default values differ in yo
     description: Documented tally log directory
     type: String
     value: '/var/log/faillock'
-
 ```
 
 ### How to execute this instance  
