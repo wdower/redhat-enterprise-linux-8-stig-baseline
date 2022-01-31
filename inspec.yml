@@ -1,5 +1,5 @@
 name: redhat-enterprise-linux-8-stig-baseline
-title: redhat-enterprise-linux-8-stig-baseline
+title: RHEL_8_STIG
 maintainer: DISA DevSecOps Team
 copyright: Defense Information Systems Agency (DISA)
 license: Apache-2.0
