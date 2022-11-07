@@ -5,6 +5,7 @@
 - REGISTRY: The container image registry you are using for pipeline component containers, i.e. Chef Workstation
 - AWS_SSH_KEY_ID: The private keyname for connecting to your test AMI.
 - POC_TAG: Name of the point of contact for EC2 instances created by this pipeline.
+- SECURITY_GROUP_IDS: A list of the security groups that should apply to the test EC2 instances.
 - AWS_REGION: ex. us-gov-west-1
 - SUBNET_ID: The subnet in your AWS instance where the test EC2 instances will be created.
 - VANILLA_AMI_ID: The AMI ID for the unhardened image for the operating system under test.
