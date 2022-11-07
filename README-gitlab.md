@@ -11,4 +11,8 @@
 - VANILLA_AMI_ID: The AMI ID for the unhardened image for the operating system under test.
 - HARDENED_AMI_ID: The AMI ID for the hardened image for the operating system under test.
 - VANILLA_CONTAINER_IMAGE: The container ID for the unhardened Docker image for the operating system under test. 
-- HARDENED_CONTAINER_IMAGE: The container ID for the hardened Docker image for the operating system under test. 
+- HARDENED_CONTAINER_IMAGE: The container ID for the hardened Docker image for the operating system under test.
+
+## Template Variables
+
+Be sure to check the README for the template files for a list of the Gitlab CI/CD variables the templates will need.
