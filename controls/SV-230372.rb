@@ -1,7 +1,8 @@
-control 'SV-230372' do
+# frozen_string_literal: true
+control "SV-230372" do
   title "RHEL 8 must implement smart card logon for multifactor authentication
 for access to interactive accounts."
-  desc  "Using an authentication device, such as a Common Access Card (CAC) or
+  desc "Using an authentication device, such as a Common Access Card (CAC) or
 token that is separate from the information system, ensures that even if the
 information system is compromised, that compromise will not affect credentials
 stored on the authentication device.
@@ -19,8 +20,9 @@ client operating system handle the multifactor authentication correctly.
 
 
   "
-  desc  'rationale', ''
-  desc  'check', "
+  desc "rationale", ""
+  desc "check",
+       "
     Verify RHEL 8 uses multifactor authentication for local access to accounts.
 
     Note: If the System Administrator demonstrates the use of an approved
@@ -47,7 +49,8 @@ this is a finding.
 in both the \"/etc/pam.d/smartcard-auth\" and \"/etc/pam.d/system-auth\" files,
 this is a finding.
   "
-  desc 'fix', "
+  desc "fix",
+       "
     Configure RHEL 8 to use multifactor authentication for local access to
 accounts.
 
@@ -72,25 +75,35 @@ restart the \"sssd\" service, run the following command:
     $ sudo systemctl restart sssd.service
   "
   impact 0.5
-  tag severity: 'medium'
-  tag gtitle: 'SRG-OS-000105-GPOS-00052'
-  tag satisfies: %w(SRG-OS-000105-GPOS-00052 SRG-OS-000106-GPOS-00053
-                    SRG-OS-000107-GPOS-00054 SRG-OS-000108-GPOS-00055)
-  tag gid: 'V-230372'
-  tag rid: 'SV-230372r627750_rule'
-  tag stig_id: 'RHEL-08-020250'
-  tag fix_id: 'F-33016r567863_fix'
-  tag cci: ['CCI-000765']
-  tag nist: ['IA-2 (1)']
+  tag severity: "medium"
+  tag gtitle: "SRG-OS-000105-GPOS-00052"
+  tag satisfies: %w[
+        SRG-OS-000105-GPOS-00052
+        SRG-OS-000106-GPOS-00053
+        SRG-OS-000107-GPOS-00054
+        SRG-OS-000108-GPOS-00055
+      ]
+  tag gid: "V-230372"
+  tag rid: "SV-230372r627750_rule"
+  tag stig_id: "RHEL-08-020250"
+  tag fix_id: "F-33016r567863_fix"
+  tag cci: ["CCI-000765"]
+  tag nist: ["IA-2 (1)"]
 
-  if virtualization.system.eql?('docker')
-    impact 0.0
-    describe "Control not applicable within a container" do
-      skip "Control not applicable within a container"
+  unless file("#{input("sssd_conf_path")}").exist?
+    describe "The sssd.conf file was not found at: input("sssd_conf_path")" do
+      skip "The sssd.conf file was not found at: #{input('sssd_conf_path')}"
     end
   else
-    describe ini('/etc/sssd/sssd.conf') do
-        its('pam_cert_auth') { should cmp 'True' }
+    if virtualization.system.eql?("docker")
+      impact 0.0
+      describe "Control not applicable within a container" do
+        skip "Control not applicable within a container"
       end
+    else
+      describe ini("#{input('sssd_conf_path')}") do
+        its("pam_cert_auth") { should cmp "True" }
+      end
+    end
   end
 end
