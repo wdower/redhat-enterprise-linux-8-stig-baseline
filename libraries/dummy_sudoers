@@ -1,3 +1,9 @@
+# A sudoers file for use in testing how to parse the sudoers file
+# for the InSpec sudoers resource.
+
+# I uncommented all the real examples in the sudoers file and added
+# a few more at the end.
+
 ## Sudoers allows particular users to run various commands as
 ## the root user, without needing the root password.
 ##
@@ -79,9 +85,6 @@ Defaults    env_keep += "LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES
 Defaults    env_keep += "LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE"
 Defaults    env_keep += "LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY"
 
-Defaults timestamp_timeout=0
-Defaults timestamp_timeout=1
-
 #
 # Adding HOME to env_keep may enable a user to run unrestricted
 # commands via sudo.
@@ -104,14 +107,14 @@ root	ALL=(ALL) 	ALL
 
 ## Allows members of the 'sys' group to run networking, software, 
 ## service management apps and more.
-# %sys ALL = NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS
+%sys ALL = NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS
 
 ## Allows people in group wheel to run all commands
 %wheel	ALL=(ALL)	ALL
 
 ## Same thing without a password
 %wheel	ALL=(ALL)	NOPASSWD: ALL
-#commented 	All=(ALL)	NOPASSWD:ALL
+
 #1	ALL=(ALL)	NOPASSWD: ALL
 foobar 	ALL=(ALL)	NOPASSWD: ALL
 ## Allows members of the users group to mount and unmount the 
@@ -120,6 +123,35 @@ foobar 	ALL=(ALL)	NOPASSWD: ALL
 
 ## Allows members of the users group to shutdown this system
 %users  localhost=/sbin/shutdown -h now
+
+## adding some new user specification lines
+## some notes --
+## - check the little EBNF blurbs in the sudoers manpage to get the formal
+##   definitions for a user specification
+## - I was using 'visudo -c dummy_sudoers' to see if this file counted as
+##   a valid sudoers file  
+## - 2-second summary is that the lines are of the form:
+##   USER   HOSTNAMES=(RUNAS)   TAGS    COMMAND
+##   
+##   where each field can be a single item or a  comma-delineated list
+## - RUNAS is optional, but if it's there it needs to be in parens
+## - COMMAND must be a fully qualified path (ergo visudo checks that it
+##   starts with '/', it doesn't know if the path actually exists), or it
+##   needs to be one of the Cmnd_Alias names
+## - if USER starts with '%', it's actually a group name
+## - if USER starts with '#', it needs to be a UID (otherwise it's a comment)
+## - you can put flags, etc. after a COMMAND full path
+## - COMMAND doesn't seem to like it if you put full paths after an alias, but
+##   is OK with putting an alias after a list of full paths. . .? I might
+##   have missed a nuance in the sudoers manpage on that one
+## - there's a definied list of valid TAGS (NOPASSWD etc.). TAGS are optional
+## - TAGS are *NOT* a list delimited by ':' -- the ':' is part of the tag string
+
+# a big, complicated line
+root,%foobar,#123 localhost,schmocalhost=(run_as_this_guy) NOPASSWD:PASSWD: /some_path_to_a_command /some_other_command DELEGATING
+
+# this line tests that we skip commented lines
+#commented 	All=(ALL)	NOPASSWD:ALL
 
 ## Read drop-in files from /etc/sudoers.d (the # here does not mean a comment)
 #includedir /etc/sudoers.d
